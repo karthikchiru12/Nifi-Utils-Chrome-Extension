@@ -1,6 +1,6 @@
 {
     "name": "Nifi Utils",
-    "description": "This extension eases the process of maintaining production huge nifi instances with numerous flows.",
+    "description": "This extension eases the process of maintaining huge production nifi instances with numerous flows.",
     "version": "1.0",
     "permissions": [
         "storage",
