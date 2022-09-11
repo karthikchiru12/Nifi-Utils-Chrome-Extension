@@ -1,0 +1,127 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: black;
+    color: white;
+    border: 4px solid #4CAAB8;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+#instanceName {
+    color: #4CAAB8;
+    text-shadow: white;
+}
+
+.normal-button {
+    background-color: #4CAAB8;
+    color: black;
+    font-weight: bold;
+    text-align: start;
+    border: 0.1px solid white;
+}
+
+.normal-button:hover {
+    background-color: chocolate;
+    color: white;
+}
+#basic-controls
+{
+    margin: 4px;
+    padding: 10px;
+}
+#instance-name
+{
+    margin: 4px;
+    padding: 10px;
+    border: 1px solid tomato;
+}
+#getProcessGroups
+{
+    display: none;
+}
+.extension-title
+{
+    margin: 4px;
+    padding: 10px;
+}
+.processGroups
+{
+    margin: 4px;
+    padding: 10px;
+}
+#clearProcessGroupsResult
+{
+    display: none;
+}
+.queue
+{
+    margin: 4px;
+    padding: 10px;
+}
+#clearQueue
+{
+    display: none;
+}
+#copyQueue
+{
+    display: none;
+}
+#addAllItemsToQueue
+{
+    display: none;
+}
+.globalSearch
+{
+    margin: 4px;
+    padding: 10px;
+}
+#getSearchResults
+{
+    display: none;
+}
+#search_keyword
+{
+    display: none;
+}
+#clearGlobalSearchResult
+{
+    display: none;
+}
+#copySearchResults
+{
+    display: none;
+}
+#utc-time
+{
+    word-break: keep-all;
+}
+
+/*custom scrollbar
+
+/* width */
+::-webkit-scrollbar 
+{
+    width: 6px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track 
+{
+    background: #4CAAB8;
+}
+  
+/* Handle */
+::-webkit-scrollbar-thumb 
+{
+    background: black;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover 
+{
+    background: white;
+}
+/*custom scrollbar

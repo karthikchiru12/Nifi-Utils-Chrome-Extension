@@ -1,0 +1,19 @@
+body {
+    margin: 50px;
+    font-size: medium;
+    background-color: black;
+    color: white;
+}
+
+.save-button {
+    background-color: #4CAAB8;
+    color: black;
+    font-weight: bold;
+    text-align: start;
+    border: 0.1px solid white;
+}
+
+.save-button:hover {
+    background-color: chocolate;
+    color: white;
+}
