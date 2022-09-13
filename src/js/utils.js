@@ -30,7 +30,7 @@ document.getElementById("getInstanceName").addEventListener("click", (event) => 
         console.log(tabs[0].url);
         var instance = new URL(tabs[0].url).host.toString();
         console.log(instance);
-        if (instance != null) {
+        if (instance != null && tabs[0].url.toString().includes(`/nifi/`)) {
             document.getElementById("instance-name").innerHTML = `<span style="color:#4CAAB8; font-size:24px; width:100%;"><b>${instance}</b></span>`;
             document.getElementById("getProcessGroups").style.display = "block";
             document.getElementById("getProcessGroups").style.display = "block";
