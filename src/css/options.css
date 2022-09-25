@@ -5,15 +5,9 @@ body {
     color: white;
 }
 
-.save-button {
-    background-color: #4CAAB8;
-    color: black;
-    font-weight: bold;
-    text-align: start;
-    border: 0.1px solid white;
-}
+.btn-primary {
+    background-color: navy;
+    border: 1px solid navy;
+    border-radius: 0%;
 
-.save-button:hover {
-    background-color: chocolate;
-    color: white;
 }

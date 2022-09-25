@@ -11,23 +11,23 @@ try {
                 </div>`);
             }
             if (itemValue["copy_link_component"] == "enabled") {
-                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#4CAAB8; border-bottom:solid 1px black;">
+                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
                 &nbsp;&nbsp;<i class="fa fa-share" style="color:black;"></i>
-                <button id="custom-copy-flow-link" style="border :0; color:black; background-color:#4CAAB8; font-weight:900;" title="Copies the flow link to clipboard">Copy&nbsp;link</button>
+                <button id="custom-copy-flow-link" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Copies the flow link to clipboard">Copy&nbsp;link</button>
                 </div>
                 <div class="clear"></div>`;
             }
             if (itemValue["enable_all_controller_services_component"] == "enabled") {
-                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#4CAAB8; border-bottom:solid 1px black;">
+                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
                 &nbsp;&nbsp;<i class="fa fa-bolt" style="color:black;"></i>
-                <button id="custom-enable-all-controller-services" style="border :0; color:black; background-color:#4CAAB8; font-weight:900;" title="Enables all the controller services in the scope">Enable&nbsp;all&nbsp;controller&nbsp;services</button>
+                <button id="custom-enable-all-controller-services" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Enables all the controller services in the scope">Enable&nbsp;all&nbsp;controller&nbsp;services</button>
                 </div>
                 <div class="clear"></div>`;
             }
             if (itemValue["disable_all_controller_services_component"] == "enabled") {
-                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#4CAAB8;">
+                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3;">
                 &nbsp;&nbsp;<i class="icon icon-enable-false" style="color:black;"></i>
-                <button id="custom-disable-all-controller-services" style="border :0; color:black; background-color:#4CAAB8; font-weight:900;" title="Disables all the controller services in the scope">Disable&nbsp;all&nbsp;controller&nbsp;services</button>
+                <button id="custom-disable-all-controller-services" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Disables all the controller services in the scope">Disable&nbsp;all&nbsp;controller&nbsp;services</button>
                 </div>
                 <div class="clear"></div>`;
             }

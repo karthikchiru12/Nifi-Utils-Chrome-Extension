@@ -1,82 +1,71 @@
 html {
     scroll-behavior: smooth;
+    border: 6px solid navy;
 }
 
 body {
     background-color: black;
     color: white;
-    border: 4px solid #4CAAB8;
-    margin: 0;
-    font-family: sans-serif;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-#instanceName {
-    color: #4CAAB8;
-    text-shadow: white;
+.btn-primary {
+    background-color: navy;
+    border: 1px solid navy;
+    border-radius: 0%;
+
 }
 
-.normal-button {
-    background-color: #4CAAB8;
-    color: black;
-    font-weight: bold;
-    text-align: start;
-    border: 0.1px solid white;
+.table-secondary
+{
+    background-color: #333;
 }
 
-.normal-button:hover {
-    background-color: chocolate;
+.bg-navy {
+    color: white;
+    background-color: navy;
+}
+
+.bg-green {
+    color: white;
+    background-color: green;
+}
+
+.bg-grey {
+    background-color: #333;
+}
+
+.bg-indigo {
+    background-color: indigo;
     color: white;
 }
-#basic-controls
-{
-    margin: 4px;
-    padding: 10px;
+
+.bg-light-navy {
+    background-color: #12384f;
+    color: white;
 }
-#instance-name
+.bg-white
 {
-    margin: 4px;
-    padding: 10px;
-    border: 1px solid tomato;
+    color: black;
+    background-color: whitesmoke;
 }
-#getProcessGroups
-{
-    display: none;
+.text-black {
+    color: black;
 }
-.extension-title
-{
-    margin: 4px;
-    padding: 10px;
+
+#instance-name {
+    color: tomato;
+    font-weight: bold;
+    font-size: medium;
+    padding: 16px;
 }
-.processGroups
-{
-    margin: 4px;
-    padding: 10px;
+
+#processGroupsResultTable {
+    font-size: small;
 }
-#clearProcessGroupsResult
+#QueueTable
 {
-    display: none;
-}
-.queue
-{
-    margin: 4px;
-    padding: 10px;
-}
-#clearQueue
-{
-    display: none;
-}
-#copyQueue
-{
-    display: none;
-}
-#addAllItemsToQueue
-{
-    display: none;
-}
-.globalSearch
-{
-    margin: 4px;
-    padding: 10px;
+    font-size: small;
 }
 #getSearchResults
 {
@@ -94,34 +83,55 @@ body {
 {
     display: none;
 }
-#utc-time
+#clearQueue
 {
-    word-break: keep-all;
+    display: none;
+}
+#copyQueue
+{
+    display: none;
+}
+#addAllItemsToQueue
+{
+    display: none;
+}
+#clearProcessGroupsResult
+{
+    display: none;
+}
+#getProcessGroups
+{
+    display: none;
+}
+#SearchTable
+{
+    font-size: small;
+}
+
+#utc-time {
+    font-size: small;
 }
 
 /*custom scrollbar
 
 /* width */
-::-webkit-scrollbar 
-{
-    width: 6px;
+::-webkit-scrollbar {
+    width: 8px;
 }
-  
+
 /* Track */
-::-webkit-scrollbar-track 
-{
-    background: #4CAAB8;
+::-webkit-scrollbar-track {
+    background: navy;
 }
-  
+
 /* Handle */
-::-webkit-scrollbar-thumb 
-{
+::-webkit-scrollbar-thumb {
     background: black;
 }
-  
+
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover 
-{
+::-webkit-scrollbar-thumb:hover {
     background: white;
 }
+
 /*custom scrollbar

@@ -5,48 +5,66 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../../bootstrap/bootstrap.min.css">
   <link rel="stylesheet" href="../css/custom_styles.css">
   <title>Nifi Utils</title>
 </head>
 
 <body>
-  <div class="extension-title">
-    <h2>Nifi Utils</h2>
+  <div class="container-fluid">
+    <br><br>
+    <h2 class="h2" style="white-space:nowrap;"><img class="img-fluid" src="../../assets/extension_icons/icon_48.png">Nifi Utils</h2>
+    <p class="p" id="utc-time" style="white-space:nowrap;">loading...</p><br>
+    <p class="p">Instance :</p>
+    <div id="instance-name" class="border">
+      Not Connected
+    </div>
+    <br><br>
+    <div id="basic-controls">
+      <h3 class="h3 text-indigo">Basic Controls</h3><br>
+      <button id="getInstanceName" class="btn btn-sm btn-primary"
+        title="If a nifi instance is opened in active tab&#013;Retreives the nifi instance host name">Get
+        Instance</button><br><br>
+      <button id="goToQueue" class="btn btn-sm btn-primary" title="Scroll to the queue">Go to queue</button><br><br>
+      <button id="goToGlobalSearch" class="btn btn-sm btn-primary" title="Scroll to the global search">Go to
+        search</button>
+    </div>
+    <hr class="border border-primary border-2 opacity-75">
+    <div class="processGroups">
+      <h3 class="h3 text-indigo">Process Groups</h3><br>
+      <button id="getProcessGroups" class="btn btn-sm btn-primary"
+        title="Fetches all the process groups&#013;And their details onto the extension">Fetch Process
+        Groups</button><br>
+      <button id="addAllItemsToQueue" class="btn btn-sm btn-primary" title="Add all items to the queue">Add all items to
+        queue</button><br>
+      <button id="clearProcessGroupsResult" class="btn btn-sm btn-primary"
+        title="Clear the process groups result">Clear</button><br>
+      <div id="processGroupsResult"></div>
+    </div>
+    <hr class="border border-primary border-2 opacity-75">
+    <div class="queue">
+      <h3 class="h3 text-indigo">Queue</h3><br>
+      <button id="clearQueue" class="btn btn-sm btn-primary" title="Clears the queue">Clear Queue</button><br><br>
+      <button id="copyQueue" class="btn btn-sm btn-primary" title="Copies the queue data in csv format">Copy
+        Queue</button><br><br>
+      <div id="queueTableResult"></div>
+    </div>
+    <hr class="border border-primary border-2 opacity-75">
+    <div class="globalSearch">
+      <h3 class="h3 text-indigo">Global Search</h3><br>
+      <input type="text" id="search_keyword" class="form-control form-control-sm w-auto" placeholder="Type the keyword to search"><br>
+      <button id="getSearchResults" class="btn btn-sm btn-primary"
+        title="Searches for given keyword&#013;In the current Nifi instance&#013;(Only process group level)">Search</button><br><br>
+      <button id="copySearchResults" class="btn btn-sm btn-primary"
+        title="Copies the search results data in csv format">Copy
+        Search Results</button><br><br>
+      <button id="clearGlobalSearchResult" class="btn btn-sm btn-primary" title="Clears the search results">Clear Search
+        Results</button><br>
+      <div id="globalSearchResult"></div>
+    </div>
+    <br><br>
   </div>
-  <div id="instance-name"><span style="color:tomato; font-size:24px; width:100%;"><b>Not Connected</b></span></div>
-  <div id="basic-controls">
-    <p id="utc-time">loading...</p>
-    <h2 style="color:#4CAAB8; ">Basic Controls</h2><br>
-    <button id="getInstanceName" class="normal-button" title="If a nifi instance is opened in active tab&#013;Retreives the nifi instance host name">Get Instance</button><br><br>
-    <button id="goToQueue" class="normal-button" title="Scroll to the queue">Go to queue</button><br><br>
-    <button id="goToGlobalSearch" class="normal-button" title="Scroll to the global search">Go to search</button>
-  </div>
-  <hr style="border: 1px solid #4CAAB8;">
-  <div class="processGroups">
-    <h2 style="color:#4CAAB8; ">Process Groups</h2><br>
-    <button id="getProcessGroups" class="normal-button" title="Fetches all the process groups&#013;And their details onto the extension">Fetch Process Groups</button><br><br>
-    <button id="addAllItemsToQueue" class="normal-button" title="Add all items to the queue">Add all items to queue</button><br><br>
-    <button id="clearProcessGroupsResult" class="normal-button" title="Clear the process groups result">Clear</button><br>
-    <div id="processGroupsResult"></div>
-  </div>
-  <br><br>
-  <hr style="border: 1px solid #4CAAB8;">
-  <div class="queue">
-    <h2 style="color:#4CAAB8; ">Queue</h2><br>
-    <button id="clearQueue" class="normal-button" title="Clears the queue">Clear Queue</button><br><br>
-    <button id="copyQueue" class="normal-button" title="Copies the queue data in csv format">Copy Queue</button><br><br>
-    <div id="queueTableResult"></div>
-  </div>
-  <br><br>
-  <hr style="border: 1px solid #4CAAB8;">
-  <div class="globalSearch">
-    <h2 style="color:#4CAAB8; ">Global Search</h2><br>
-    <input type="text" id="search_keyword" placeholder="Type the keyword to search"><br><br>
-    <button id="getSearchResults" class="normal-button" title="Searches for given keyword&#013;In the current Nifi instance&#013;(Only process group level)">Search</button><br><br>
-    <button id="copySearchResults" class="normal-button" title="Copies the search results data in csv format">Copy Search Results</button><br><br>
-    <button id="clearGlobalSearchResult" class="normal-button" title="Clears the search results">Clear Search Results</button><br>
-    <div id="globalSearchResult"></div>
-  </div>
+  <script src="../../bootstrap/bootstrap.bundle.min.js"></script>
   <script src="../js/utils.js"></script>
 </body>
 

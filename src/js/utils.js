@@ -31,7 +31,7 @@ document.getElementById("getInstanceName").addEventListener("click", (event) => 
         var instance = new URL(tabs[0].url).host.toString();
         console.log(instance);
         if (instance != null && tabs[0].url.toString().includes(`/nifi/`)) {
-            document.getElementById("instance-name").innerHTML = `<span style="color:#4CAAB8; font-size:24px; width:100%;"><b>${instance}</b></span>`;
+            document.getElementById("instance-name").innerHTML = `<span style="color:wheat;">${instance}</span>`;
             document.getElementById("getProcessGroups").style.display = "block";
             document.getElementById("getProcessGroups").style.display = "block";
             document.getElementById("getSearchResults").style.display = "block";
@@ -156,7 +156,9 @@ document.getElementById("getProcessGroups").addEventListener("click", (event) =>
                             }
 
                         }
-                        document.getElementById("processGroupsResult").innerHTML = "loading...";
+                        document.getElementById("processGroupsResult").innerHTML = `<br><div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                        </div>`;
                         getPgData();
 
                     }
@@ -211,38 +213,39 @@ document.body.addEventListener("click", (event) => {
 function setProcessGroupResult(store_object) {
     var resultString = "";
     resultString += `<p style="color:#4CAAB8;"><b style="color:aqua;font-size:16px;">${store_object["instance_fetched_from"]}&nbsp;|&nbsp;<span><a style="text-decoration:none;color:tomato;" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${store_object["parent_pg_id"]}" target="_blank">${store_object["parent_pg_name"]}</a></span></b><br>${store_object["fetched_time"]}</p>`;
-    resultString += `<br><input type="text" id="processGroupsResultSearch" placeholder="Search process group name"><br><br>`;
-    resultString += `<table style="border : 1px solid white; border-collapse: collapse;" id="processGroupsResultTable">`;
-    resultString += `<tr><th style="border : 1px solid white; border-collapse: collapse;">&nbsp;&nbsp;&nbsp;</th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;"> </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;"> Process<br>Group </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;cursor: pointer;" id="running_head"><img src="../../assets/misc_icons/running.svg">&nbsp;Running </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">&nbsp;Stopped </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">&nbsp;Invalid </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">&nbsp;Disabled </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;cursor: pointer;" id="queued_head"> Queued<br>Count </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse; text-align:center;"> Queued<br>Data </th></tr>`;
+    resultString += `<br><input class="form-control form-control-sm w-auto" type="text" id="processGroupsResultSearch" placeholder="Search process group name"><br><br>`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="processGroupsResultTable">`;
+    resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
+    resultString += `<th>No</th>`;
+    resultString += `<th>Process Group</th>`;
+    resultString += `<th style="cursor: pointer;" id="running_head"><img src="../../assets/misc_icons/running.svg">Running</th>`;
+    resultString += `<th style="cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">Stopped</th>`;
+    resultString += `<th style="cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">Invalid</th>`;
+    resultString += `<th style="cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">Disabled</th>`;
+    resultString += `<th style="cursor: pointer;" id="queued_head">Queued<br>Count</th>`;
+    resultString += `<th style="">Queued<br>Data</th></tr>`;
 
     let row_index = 1;
+    resultString += `<tbody class="table-group-divider">`;
     store_object["data"].forEach((element) => {
         resultString += `<tr>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;"><br>&nbsp;&nbsp;<button id="add-to-queue" class="normal-button" style="margin:10px;">+</button>&nbsp;&nbsp;<br></td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${row_index}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse;" title="${element["pg_id"]}" id="process_group_name">
+        resultString += `<td><button id="add-to-queue" class="btn btn-sm btn-primary" style="margin:10px;">+</button></td>`;
+        resultString += `<td>${row_index}</td>`;
+        resultString += `<td title="${element["pg_id"]}" id="process_group_name"><div>
             ${element["pg_name"]}<br><br>
             <span style="color:wheat;">Link :</span>
             <a style="text-decoration:none; color:tomato;" title="${store_object["instance_fetched_from"]}" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${element["pg_id"]}" target="_blank">Open</a><br><br>
-            </td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${element["running"]}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${element["stopped"]}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${element["invalid"]}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${element["disabled"]}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse;white-space: nowrap; text-align:center;">${element["queued"]}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse;white-space: nowrap; text-align:center;">${element["queued_data"]}</td></tr>`;
+            </div></td>`;
+        resultString += `<td>${element["running"]}</td>`;
+        resultString += `<td>${element["stopped"]}</td>`;
+        resultString += `<td>${element["invalid"]}</td>`;
+        resultString += `<td>${element["disabled"]}</td>`;
+        resultString += `<td>${element["queued"]}</td>`;
+        resultString += `<td>${element["queued_data"]}</td></tr>`;
 
         row_index += 1;
     });
-    resultString += `</table>`;
+    resultString += `</tbody></table>`;
 
     document.getElementById("processGroupsResult").innerHTML = resultString;
 }
@@ -320,27 +323,27 @@ document.body.addEventListener("click", (event) => {
 function setQueueTable(store_object) {
 
     var resultString = "";
-    resultString += `<table style="border : 1px solid white; border-collapse: collapse;" id="QueueTable">`;
-    resultString += `<tr><th style="border : 1px solid white; border-collapse: collapse;">&nbsp;&nbsp;&nbsp;</th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;">&nbsp;&nbsp;&nbsp;</th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;">PG Name</th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;">Id</th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;">Instance</th></tr>`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="QueueTable">`;
+    resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
+    resultString += `<th>&nbsp;&nbsp;&nbsp;</th>`;
+    resultString += `<th>PG Name</th>`;
+    resultString += `<th>Id</th>`;
+    resultString += `<th>Instance</th></tr>`;
     
     var row_index = 1;
     Object.keys(store_object).forEach((element) => {
 
         resultString += `<tr>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;"><br><br>&nbsp;&nbsp;<button id="remove-from-queue" class="normal-button" style="margin:10px;">-</button>&nbsp;&nbsp;<br></td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${row_index}</td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${store_object[element]}</td>`
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; white-space: nowrap;">${element.split(",")[0]}<br><br><span style="color:wheat;">Link : </span><a style="text-decoration:none; color:aqua;" href="https://${element.split(",")[1]}/nifi/?processGroupId=${element.split(",")[0]}" target="_blank">Open</a></td>`;
-        resultString += `<td style="border : 1px solid white; border-collapse: collapse; white-space: nowrap; text-align:center;">${element.split(",")[1]}</td></tr>`;
+        resultString += `<td><br><br>&nbsp;&nbsp;<button id="remove-from-queue" class="btn btn-sm btn-primary" style="margin:10px;">-</button>&nbsp;&nbsp;<br></td>`;
+        resultString += `<td>${row_index}</td>`;
+        resultString += `<td>${store_object[element]}</td>`
+        resultString += `<td>${element.split(",")[0]}<br><br><span style="color:wheat;">Link : </span><a style="text-decoration:none; color:tomato;" href="https://${element.split(",")[1]}/nifi/?processGroupId=${element.split(",")[0]}" target="_blank">Open</a></td>`;
+        resultString += `<td>${element.split(",")[1]}</td></tr>`;
 
         row_index += 1;
     });
     resultString += `</table>`;
-    resultString = `<p>Queue size : ${row_index - 1}</p>` + resultString;
+    resultString = `<p class="p">Queue size : ${row_index - 1}</p>` + resultString;
 
     document.getElementById("queueTableResult").innerHTML = resultString;
     // chrome.storage.local.set({ "queueTableResult": resultString }, () => {
@@ -502,7 +505,9 @@ document.getElementById("getSearchResults").addEventListener("click", (event) =>
                                 setSearchTable(results);
                             }
                         }
-                        document.getElementById("globalSearchResult").innerHTML = "loading...";
+                        document.getElementById("globalSearchResult").innerHTML = `<br><div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                        </div>`;
                         getSearchResults();
                     }
                 }
@@ -523,17 +528,17 @@ document.getElementById("getSearchResults").addEventListener("click", (event) =>
 function setSearchTable(store_object) {
 
     var resultString = "";
-    resultString += `<p>Search results for <span style="color:#4CAAB8;"><b>${store_object["search_keyword"]}</b></span> in the instance <span style="color:#4CAAB8;"><b>${store_object["hostname"]}</b></span> :</p>`;
-    resultString += `<table style="border : 1px solid white; border-collapse: collapse; width:100%;" id="SearchTable">`;
-    resultString += `<tr><th style="border : 1px solid white; border-collapse: collapse;"> </th>`;
-    resultString += `<th style="border : 1px solid white; border-collapse: collapse;">Search Results</th></tr>`;
+    resultString += `<p class="p">Search results for <span style="color:#4CAAB8;"><b>${store_object["search_keyword"]}</b></span> in the instance <span style="color:#4CAAB8;"><b>${store_object["hostname"]}</b></span> :</p>`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="SearchTable">`;
+    resultString += `<tr class="table-info"><th>No</th>`;
+    resultString += `<th>Search Results</th></tr>`;
 
     var row_index = 1;
     Object.keys(store_object).forEach((element) => {
         if (element != "hostname" && element != "search_keyword") {
             resultString += `<tr>`;
-            resultString += `<td style="border : 1px solid white; border-collapse: collapse; text-align:center;">${row_index}</td>`;
-            resultString += `<td style="border : 1px solid white; border-collapse: collapse;">`;
+            resultString += `<td>${row_index}</td>`;
+            resultString += `<td>`;
             resultString += `&nbsp;<a style="text-decoration:none; color:wheat;" target="_blank" href="https://${store_object["hostname"]}/nifi/?processGroupId=${element}">${store_object[element]["name"]}</a><br><br>`;
             store_object[element]["children"].forEach((process_group) => {
                 resultString += `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`;
