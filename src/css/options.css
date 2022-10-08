@@ -6,8 +6,9 @@ body {
 }
 
 .btn-primary {
-    background-color: navy;
-    border: 1px solid navy;
+    background-color: #189AB4;
+    border: 1px solid #189AB4;
     border-radius: 0%;
+    color: black;
 
 }

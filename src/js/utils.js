@@ -214,7 +214,7 @@ function setProcessGroupResult(store_object) {
     var resultString = "";
     resultString += `<p style="color:#4CAAB8;"><b style="color:aqua;font-size:16px;">${store_object["instance_fetched_from"]}&nbsp;|&nbsp;<span><a style="text-decoration:none;color:tomato;" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${store_object["parent_pg_id"]}" target="_blank">${store_object["parent_pg_name"]}</a></span></b><br>${store_object["fetched_time"]}</p>`;
     resultString += `<br><input class="form-control form-control-sm w-auto" type="text" id="processGroupsResultSearch" placeholder="Search process group name"><br><br>`;
-    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="processGroupsResultTable">`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover table-striped" id="processGroupsResultTable">`;
     resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
     resultString += `<th>No</th>`;
     resultString += `<th>Process Group</th>`;
@@ -231,9 +231,9 @@ function setProcessGroupResult(store_object) {
         resultString += `<tr>`;
         resultString += `<td><button id="add-to-queue" class="btn btn-sm btn-primary" style="margin:10px;">+</button></td>`;
         resultString += `<td>${row_index}</td>`;
-        resultString += `<td title="${element["pg_id"]}" id="process_group_name"><div>
+        resultString += `<td><div title="${element["pg_id"]}" id="process_group_name">
             ${element["pg_name"]}<br><br>
-            <span style="color:wheat;">Link :</span>
+            <span ">Link :</span>
             <a style="text-decoration:none; color:tomato;" title="${store_object["instance_fetched_from"]}" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${element["pg_id"]}" target="_blank">Open</a><br><br>
             </div></td>`;
         resultString += `<td>${element["running"]}</td>`;
@@ -285,7 +285,7 @@ document.body.addEventListener("click", (event) => {
         });
         var row = event.target.parentNode.parentNode.childNodes;
         var index = parseInt(row[1].textContent);
-        event.target.parentNode.parentNode.style.backgroundColor = "#888";
+        event.target.parentNode.parentNode.className = "table-secondary";
         chrome.storage.local.get(["queue_data_store"], (item) => {
             var itemValue = item["queue_data_store"];
             if (itemValue != null && itemValue != undefined) {
@@ -323,7 +323,7 @@ document.body.addEventListener("click", (event) => {
 function setQueueTable(store_object) {
 
     var resultString = "";
-    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="QueueTable">`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover table-striped" id="QueueTable">`;
     resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
     resultString += `<th>&nbsp;&nbsp;&nbsp;</th>`;
     resultString += `<th>PG Name</th>`;
@@ -529,7 +529,7 @@ function setSearchTable(store_object) {
 
     var resultString = "";
     resultString += `<p class="p">Search results for <span style="color:#4CAAB8;"><b>${store_object["search_keyword"]}</b></span> in the instance <span style="color:#4CAAB8;"><b>${store_object["hostname"]}</b></span> :</p>`;
-    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover" id="SearchTable">`;
+    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover table-striped" id="SearchTable">`;
     resultString += `<tr class="table-info"><th>No</th>`;
     resultString += `<th>Search Results</th></tr>`;
 

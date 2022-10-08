@@ -1,6 +1,6 @@
 html {
     scroll-behavior: smooth;
-    border: 6px solid navy;
+    border: 6px solid #189AB4;
 }
 
 body {
@@ -10,10 +10,11 @@ body {
 }
 
 .btn-primary {
-    background-color: navy;
-    border: 1px solid navy;
+    background-color: #189AB4;
+    border: 1px solid #189AB4;
     border-radius: 0%;
-
+    color: black;
+    font-weight: 600;
 }
 
 .table-secondary
@@ -23,7 +24,7 @@ body {
 
 .bg-navy {
     color: white;
-    background-color: navy;
+    background-color: #189AB4;
 }
 
 .bg-green {
@@ -121,7 +122,7 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: navy;
+    background: #189AB4;
 }
 
 /* Handle */
