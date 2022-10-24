@@ -112,27 +112,7 @@ body {
 #utc-time {
     font-size: small;
 }
-
-/*custom scrollbar
-
-/* width */
-::-webkit-scrollbar {
-    width: 8px;
+#omni-store-size
+{
+    font-size: small;
 }
-
-/* Track */
-::-webkit-scrollbar-track {
-    background: #189AB4;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-    background: black;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: white;
-}
-
-/*custom scrollbar

@@ -6,15 +6,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../../bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="../css/custom_styles.css">
+  <link rel="stylesheet" href="../css/utils_home.css">
+  <link rel="stylesheet" href="../css/misc.css">
   <title>Nifi Utils</title>
 </head>
 
 <body>
   <div class="container-fluid">
     <br><br>
-    <h2 class="h2" style="white-space:nowrap;"><img class="img-fluid" src="../../assets/extension_icons/icon_48.png">Nifi Utils</h2>
-    <p class="p" id="utc-time" style="white-space:nowrap;">loading...</p><br>
+    <a href="../views/about.html?status=tutorial" target="_blank" style="text-decoration: none; color :white; cursor:help;"><h2 class="h2" style="white-space:nowrap;"><img class="img-fluid" src="../../assets/extension_icons/icon_48.png">Nifi Utils</h2></a>
+    <p class="p" id="utc-time" style="white-space:nowrap;">loading...</p>
+    </span><p class="p" id="omni-store-size">Search store size : </p><br>
     <p class="p">Instance :</p>
     <div id="instance-name" class="border">
       Not Connected
@@ -23,7 +25,7 @@
     <div id="basic-controls">
       <h3 class="h3 text-indigo">Basic Controls</h3><br>
       <button id="getInstanceName" class="btn btn-sm btn-primary"
-        title="If a nifi instance is opened in active tab&#013;Retreives the nifi instance host name">Get
+        title="If a nifi instance is opened in active tab&#013;Retrieves the nifi instance host name">Get
         Instance</button><br><br>
       <button id="goToQueue" class="btn btn-sm btn-primary" title="Scroll to the queue">Go to queue</button><br><br>
       <button id="goToGlobalSearch" class="btn btn-sm btn-primary" title="Scroll to the global search">Go to

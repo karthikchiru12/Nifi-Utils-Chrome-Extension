@@ -1,7 +1,7 @@
 {
     "name": "Nifi Utils",
     "description": "This extension eases the process of maintaining huge production nifi instances with numerous flows.",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "permissions": [
         "storage",
         "activeTab",
@@ -27,5 +27,8 @@
     "action": {
         "default_popup": "src/views/utils_home.html"
     },
-    "options_page": "src/views/options.html" 
+    "options_page": "src/views/options.html",
+    "omnibox": {
+        "keyword": "nu"
+      }
 }

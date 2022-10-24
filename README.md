@@ -1,14 +1,18 @@
 # Nifi-Utils-Chrome-Extension
 This extension eases the process of maintaining huge production nifi instances with numerous flows.
 
-By using this extension you can :
+- This extension only works on Nifi instances that are deployed / productionized.
+ 
+- When installed, it identifies when a logged-in Nifi instance is opened in the currently active tab in the browser. Then it inserts a content script, which retrieves the JWT (JSON Web Token) and hostname from the currently active tab to the extension. 
 
-1. Fetch a list of all the process groups visible on the current Nifi page, and the process groups list will be cached for later.
-2. After fetching the list of process groups, they can be sorted based on the running, stopped, invalid and disabled counts within each process group.
-3. You can bookmark the process groups you want to visit later by adding them to the queue.
-4. All of the process groups available on the current Nifi page can be added to the queue, and then can be copied into a spreadsheet.
-5. Process groups can be searched right inside the extension, and the search results will be cached for later.
-6. A few custom UI elements can be added onto Nifi UI for copying JWT token directly to clipboard, enabling and disabling controller services.
+- Then using that token and the instance`s hostname, the extension can retrieve a list of all the process groups present on the screen, bookmark any process group by adding it to the queue, and search for any process group.
+ 
+- All the results by any of the features provided are cached to be viewed later. 
+
+- The operation of getting the hostname and JWT token should be performed, whenever the user wants to fetch or search for new data or update existing data. 
+
+- All the cached results will be made available to be searched from the chrome`s omni box directly.
+
 
 ## Disclaimer
 

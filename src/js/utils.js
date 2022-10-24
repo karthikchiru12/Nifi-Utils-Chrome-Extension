@@ -1,27 +1,27 @@
 chrome.storage.local.get(["pg_data_store"], (item) => {
-    var itemValue = item["pg_data_store"];
-    if (itemValue != null && itemValue != undefined) {
-        setProcessGroupResult(itemValue);
+    var pg_data_store = item["pg_data_store"];
+    if (pg_data_store != null && pg_data_store != undefined) {
+        setProcessGroupResult(pg_data_store);
         document.getElementById("clearProcessGroupsResult").style.display = "block";
         document.getElementById("addAllItemsToQueue").style.display = "block";
     }
 });
 
 chrome.storage.local.get(["queue_data_store"], (item) => {
-    var itemValue = item["queue_data_store"];
-    if (itemValue != null && itemValue != undefined) {
+    var queue_data_store = item["queue_data_store"];
+    if (queue_data_store != null && queue_data_store != undefined) {
         document.getElementById("clearQueue").style.display = "block";
         document.getElementById("copyQueue").style.display = "block";
-        setQueueTable(itemValue);
+        setQueueTable(queue_data_store);
     }
 });
 
 chrome.storage.local.get(["search_data_store"], (item) => {
-    var itemValue = item["search_data_store"];
-    if (itemValue != null && itemValue != undefined) {
+    var search_data_store = item["search_data_store"];
+    if (search_data_store != null && search_data_store != undefined) {
         document.getElementById("clearGlobalSearchResult").style.display = "block";
         document.getElementById("copySearchResults").style.display = "block";
-        setSearchTable(itemValue);
+        setSearchTable(search_data_store);
     }
 });
 
@@ -153,6 +153,28 @@ document.getElementById("getProcessGroups").addEventListener("click", (event) =>
                                 chrome.storage.local.set({ "pg_data_store": pg_data_store }, () => {
                                     console.log("Saved!");
                                 });
+
+                                var temp_data_store = {};
+                                temp_data_store[pg_data_store["parent_pg_id"] + "," + pg_data_store["instance_fetched_from"]] = pg_data_store["parent_pg_name"]
+                                pg_data_store["data"].forEach((element) => {
+                                    temp_data_store[element["pg_id"] + "," + pg_data_store["instance_fetched_from"]] = element["pg_name"]
+                                });
+
+                                chrome.storage.local.get(["omni_data_store"], (omni_store_item) => {
+                                    var omni_data_store = omni_store_item["omni_data_store"];
+                                    var final_omni_data_store = {};
+                                    if (omni_data_store != null && omni_data_store != undefined) {
+                                        final_omni_data_store = { ...temp_data_store, ...omni_data_store };
+                                    }
+                                    else {
+                                        final_omni_data_store = temp_data_store;
+                                    }
+                                    chrome.storage.local.set({ "omni_data_store": final_omni_data_store }, () => {
+                                        console.log("Saved!");
+                                    });
+                                });
+
+
                             }
 
                         }
@@ -179,30 +201,30 @@ document.getElementById("getProcessGroups").addEventListener("click", (event) =>
 document.body.addEventListener("click", (event) => {
     if (event.target.id.includes("_head")) {
         chrome.storage.local.get(["pg_data_store"], (item) => {
-            var itemValue = item["pg_data_store"];
-            if (itemValue != null && itemValue != undefined) {
-                if (itemValue[event.target.id] == "default") {
-                    itemValue["data"].sort((a, b) => (a[event.target.id.split("_")[0]] > b[event.target.id.split("_")[0]]) ? 1 : -1);
-                    itemValue[event.target.id] = "ascending";
-                    chrome.storage.local.set({ "pg_data_store": itemValue }, () => {
+            var pg_data_store = item["pg_data_store"];
+            if (pg_data_store != null && pg_data_store != undefined) {
+                if (pg_data_store[event.target.id] == "default") {
+                    pg_data_store["data"].sort((a, b) => (a[event.target.id.split("_")[0]] > b[event.target.id.split("_")[0]]) ? 1 : -1);
+                    pg_data_store[event.target.id] = "ascending";
+                    chrome.storage.local.set({ "pg_data_store": pg_data_store }, () => {
                         console.log("Saved!");
                     });
                 }
-                else if (itemValue[event.target.id] == "ascending") {
-                    itemValue["data"].sort((a, b) => (a[event.target.id.split("_")[0]] < b[event.target.id.split("_")[0]]) ? 1 : -1);
-                    itemValue[event.target.id] = "descending";
-                    chrome.storage.local.set({ "pg_data_store": itemValue }, () => {
+                else if (pg_data_store[event.target.id] == "ascending") {
+                    pg_data_store["data"].sort((a, b) => (a[event.target.id.split("_")[0]] < b[event.target.id.split("_")[0]]) ? 1 : -1);
+                    pg_data_store[event.target.id] = "descending";
+                    chrome.storage.local.set({ "pg_data_store": pg_data_store }, () => {
                         console.log("Saved!");
                     });
                 }
                 else {
-                    itemValue["data"].sort((a, b) => (a[event.target.id.split("_")[0]] > b[event.target.id.split("_")[0]]) ? 1 : -1);
-                    itemValue[event.target.id] = "ascending";
-                    chrome.storage.local.set({ "pg_data_store": itemValue }, () => {
+                    pg_data_store["data"].sort((a, b) => (a[event.target.id.split("_")[0]] > b[event.target.id.split("_")[0]]) ? 1 : -1);
+                    pg_data_store[event.target.id] = "ascending";
+                    chrome.storage.local.set({ "pg_data_store": pg_data_store }, () => {
                         console.log("Saved!");
                     });
                 }
-                setProcessGroupResult(itemValue);
+                setProcessGroupResult(pg_data_store);
             }
         });
 
@@ -276,36 +298,36 @@ document.body.addEventListener("keyup", (event) => {
 document.body.addEventListener("click", (event) => {
 
     if (event.target.id == "add-to-queue") {
-        var pg_data_store;
+        var final_pg_data_store;
         chrome.storage.local.get(["pg_data_store"], (item) => {
-            var itemValue = item["pg_data_store"];
-            if (itemValue != null && itemValue != undefined) {
-                pg_data_store = itemValue;
+            var pg_data_store = item["pg_data_store"];
+            if (pg_data_store != null && pg_data_store != undefined) {
+                final_pg_data_store = pg_data_store;
             }
         });
         var row = event.target.parentNode.parentNode.childNodes;
         var index = parseInt(row[1].textContent);
         event.target.parentNode.parentNode.className = "table-secondary";
         chrome.storage.local.get(["queue_data_store"], (item) => {
-            var itemValue = item["queue_data_store"];
-            if (itemValue != null && itemValue != undefined) {
-                var key = pg_data_store["data"][index - 1]["pg_id"] + "," + pg_data_store["instance_fetched_from"];
-                var value = pg_data_store["data"][index - 1]["pg_name"];
-                if (key in itemValue) {
+            var queue_data_store = item["queue_data_store"];
+            if (queue_data_store != null && queue_data_store != undefined) {
+                var key = final_pg_data_store["data"][index - 1]["pg_id"] + "," + final_pg_data_store["instance_fetched_from"];
+                var value = final_pg_data_store["data"][index - 1]["pg_name"];
+                if (key in queue_data_store) {
                     alert(`${key} Already exists in the queue!...`);
                 }
                 else {
-                    itemValue[key] = value;
-                    chrome.storage.local.set({ "queue_data_store": itemValue }, () => {
+                    queue_data_store[key] = value;
+                    chrome.storage.local.set({ "queue_data_store": queue_data_store }, () => {
                         console.log("Saved!");
                     });
-                    setQueueTable(itemValue);
+                    setQueueTable(queue_data_store);
                 }
             }
             else {
                 var temp_data = {};
-                var key = pg_data_store["data"][index - 1]["pg_id"] + "," + pg_data_store["instance_fetched_from"];
-                var value = pg_data_store["data"][index - 1]["pg_name"];
+                var key = final_pg_data_store["data"][index - 1]["pg_id"] + "," + final_pg_data_store["instance_fetched_from"];
+                var value = final_pg_data_store["data"][index - 1]["pg_name"];
                 temp_data[key] = value;
                 chrome.storage.local.set({ "queue_data_store": temp_data }, () => {
                     console.log("Saved!");
@@ -329,7 +351,7 @@ function setQueueTable(store_object) {
     resultString += `<th>PG Name</th>`;
     resultString += `<th>Id</th>`;
     resultString += `<th>Instance</th></tr>`;
-    
+
     var row_index = 1;
     Object.keys(store_object).forEach((element) => {
 
@@ -346,9 +368,6 @@ function setQueueTable(store_object) {
     resultString = `<p class="p">Queue size : ${row_index - 1}</p>` + resultString;
 
     document.getElementById("queueTableResult").innerHTML = resultString;
-    // chrome.storage.local.set({ "queueTableResult": resultString }, () => {
-    //     console.log("Saved!");
-    // });
 }
 
 document.getElementById("goToQueue").addEventListener("click", (event) => {
@@ -360,13 +379,13 @@ document.body.addEventListener("click", (event) => {
     if (event.target.id == "remove-from-queue") {
         var row = event.target.parentNode.parentNode.childNodes;
         chrome.storage.local.get(["queue_data_store"], (item) => {
-            var itemValue = item["queue_data_store"];
-            if (itemValue != null && itemValue != undefined) {
-                console.log(itemValue);//
+            var queue_data_store = item["queue_data_store"];
+            if (queue_data_store != null && queue_data_store != undefined) {
+                // console.log(itemValue);
                 var key = row[3].textContent.split(":")[0].trim().replaceAll("Link", "") + "," + row[4].textContent;
-                console.log(key);
-                delete itemValue[key];
-                if (Object.keys(itemValue) == 0) {
+                // console.log(key);
+                delete queue_data_store[key];
+                if (Object.keys(queue_data_store).length == 0) {
                     document.getElementById("clearQueue").style.display = "none";
                     document.getElementById("copyQueue").style.display = "none";
                     document.getElementById('queueTableResult').innerHTML = "";
@@ -378,10 +397,10 @@ document.body.addEventListener("click", (event) => {
                     });
                 }
                 else {
-                    chrome.storage.local.set({ "queue_data_store": itemValue }, () => {
+                    chrome.storage.local.set({ "queue_data_store": queue_data_store }, () => {
                         console.log("Saved!");
                     });
-                    setQueueTable(itemValue);
+                    setQueueTable(queue_data_store);
                 }
             }
         });
@@ -405,11 +424,11 @@ document.getElementById("copyQueue").addEventListener("click", (event) => {
 
     var prod_items_present_in_queue = 0;
     chrome.storage.local.get(["queue_data_store"], (item) => {
-        var itemValue = item["queue_data_store"];
-        if (itemValue != null && itemValue != undefined) {
+        var queue_data_store = item["queue_data_store"];
+        if (queue_data_store != null && queue_data_store != undefined) {
             var queue_data = `id,instance,pgName \n`;
-            Object.keys(itemValue).forEach((element) => {
-                queue_data += `${element.split(",")[0]}, ${element.split(",")[1]}, ${itemValue[element].toString().replaceAll(",", " ")} \n`;
+            Object.keys(queue_data_store).forEach((element) => {
+                queue_data += `${element.split(",")[0]}, ${element.split(",")[1]}, ${queue_data_store[element].toString().replaceAll(",", " ")} \n`;
             });
             navigator.clipboard.writeText(queue_data);
         }
@@ -419,21 +438,31 @@ document.getElementById("copyQueue").addEventListener("click", (event) => {
 
 document.getElementById("addAllItemsToQueue").addEventListener("click", (event) => {
     chrome.storage.local.get(["pg_data_store"], (item) => {
-        var itemValue = item["pg_data_store"];
-        if (itemValue != null && itemValue != undefined) {
-            var temp_data = {};
-            itemValue["data"].forEach((element) => {
+        var pg_data_store = item["pg_data_store"];
+        if (pg_data_store != null && pg_data_store != undefined) {
+            chrome.storage.local.get(["queue_data_store"], (queue_item) => {
+                var queue_data_store = queue_item["queue_data_store"];
+                var temp_data = {};
+                var final_data = {};
+                pg_data_store["data"].forEach((element) => {
 
-                var key = element["pg_id"] + "," + itemValue["instance_fetched_from"];
-                var value = element["pg_name"];
-                temp_data[key] = value;
+                    var key = element["pg_id"] + "," + pg_data_store["instance_fetched_from"];
+                    var value = element["pg_name"];
+                    temp_data[key] = value;
+                });
+                if (queue_data_store != null && queue_data_store != undefined) {
+                    final_data = { ...queue_data_store, ...temp_data };
+                }
+                else {
+                    final_data = temp_data;
+                }
+                chrome.storage.local.set({ "queue_data_store": final_data }, () => {
+                    console.log("Saved!");
+                });
+                document.getElementById("clearQueue").style.display = "block";
+                document.getElementById("copyQueue").style.display = "block";
+                setQueueTable(final_data);
             });
-            chrome.storage.local.set({ "queue_data_store": temp_data }, () => {
-                console.log("Saved!");
-            });
-            document.getElementById("clearQueue").style.display = "block";
-            document.getElementById("copyQueue").style.display = "block";
-            setQueueTable(temp_data);
 
         }
     });
@@ -503,6 +532,30 @@ document.getElementById("getSearchResults").addEventListener("click", (event) =>
                                     console.log("Saved!");
                                 });
                                 setSearchTable(results);
+
+                                var temp_data_store = {};
+                                Object.keys(results).forEach((element) => {
+                                    if (element != "hostname" && element != "search_keyword") {
+                                        temp_data_store[element + "," + results["hostname"]] = results[element]["name"];
+                                        results[element]["children"].forEach((record) => {
+                                            temp_data_store[record[0] + "," + results["hostname"]] = record[1];
+                                        });
+                                    }
+                                });
+
+                                chrome.storage.local.get(["omni_data_store"], (omni_store_item) => {
+                                    var omni_data_store = omni_store_item["omni_data_store"];
+                                    var final_omni_data_store = {};
+                                    if (omni_data_store != null && omni_data_store != undefined) {
+                                        final_omni_data_store = { ...temp_data_store, ...omni_data_store };
+                                    }
+                                    else {
+                                        final_omni_data_store = temp_data_store;
+                                    }
+                                    chrome.storage.local.set({ "omni_data_store": final_omni_data_store }, () => {
+                                        console.log("Saved!");
+                                    });
+                                });
                             }
                         }
                         document.getElementById("globalSearchResult").innerHTML = `<br><div class="spinner-border text-light" role="status">
@@ -563,14 +616,14 @@ document.getElementById("goToGlobalSearch").addEventListener("click", (event) =>
 document.getElementById("copySearchResults").addEventListener("click", (event) => {
 
     chrome.storage.local.get(["search_data_store"], (item) => {
-        var itemValue = item["search_data_store"];
-        if (itemValue != null && itemValue != undefined) {
+        var search_data_store = item["search_data_store"];
+        if (search_data_store != null && search_data_store != undefined) {
             var resultString = ``;
             resultString += `parent_pg_id, parent_pg_name, pg_id, pg_name\n`;
-            Object.keys(itemValue).forEach((element) => {
+            Object.keys(search_data_store).forEach((element) => {
                 if (element != "hostname" && element != "search_keyword") {
-                    resultString += `${element},${itemValue[element]["name"].toString().replaceAll(",", " ")},`;
-                    itemValue[element]["children"].forEach((flow, idx) => {
+                    resultString += `${element},${search_data_store[element]["name"].toString().replaceAll(",", " ")},`;
+                    search_data_store[element]["children"].forEach((flow, idx) => {
                         if (idx == 0) {
                             resultString += `${flow[0]},${flow[1].toString().replaceAll(",", " ")}\n`;
                         }
@@ -591,4 +644,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
     setInterval(() =>
         document.getElementById("utc-time").innerText = new Date().toUTCString()
         , 1000);
+    chrome.storage.local.get(["omni_data_store"], (item) => {
+        var omni_data_store = item["omni_data_store"];
+        var text = document.getElementById("omni-store-size").innerText;
+        if (omni_data_store != null && omni_data_store != undefined) {
+            document.getElementById("omni-store-size").innerText = text + " " +Object.keys(omni_data_store).length.toString();
+        }
+        else {
+            document.getElementById("omni-store-size").innerText = text + " 0";
+        }
+    });
 }); 

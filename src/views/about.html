@@ -1,63 +1,230 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <title>Welcome - Nifi Utils</title>
-    <style>
-        body 
-        {
-            font-size: medium;
-            margin: 50px;
-            background-color: black;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nifi Utils - About</title>
+    <link href="../../bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/misc.css" rel="stylesheet">
 </head>
 
 <body>
-    <div style="display:inline-block">
-        <div style="background-color: whitesmoke; margin-left: auto; padding: 10px;display: inline-block;">
-            <h3 style="color:sienna;">Welcome !</h3>
-            <p>Nifi Utils extension is successfully installed.<br></p>
-        </div>&nbsp;&nbsp;&nbsp;&nbsp;
-        <div style="background-color:ghostwhite; margin-left: auto; padding: 10px;display: inline-block;">
-            <h3 style="color:sienna;">Tested On :</h3>
-            <p>Chrome 103+<br></p>
-        </div>&nbsp;&nbsp;&nbsp;&nbsp;
-        <div style="background-color:mistyrose; margin-left: auto; padding: 10px;display: inline-block;">
-            <h3 style="color:sienna;">Works on :</h3>
-            <p>Apache Nifi 1.13.2<br></p>
-        </div>&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="container">
         <br><br>
-        <div style="background-color:beige; margin-left: auto; padding: 10px;display: inline-block;">
-            <h3 style="color:sienna;">License Agreement :</h3>
-            <pre>
-                MIT License
-    
-                Copyright Chiranjeevi Karthik Kuruganti &#169; 2022 
-    
-                Permission is hereby granted, free of charge, to any person obtaining a copy
-                of this software and associated documentation files (the "Software"), to deal
-                in the Software without restriction, including without limitation the rights
-                to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-                copies of the Software, and to permit persons to whom the Software is
-                furnished to do so, subject to the following conditions:
-                
-                The above copyright notice and this permission notice shall be included in all
-                copies or substantial portions of the Software.
-                
-                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-                IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-                FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-                AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-                LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-                SOFTWARE.</pre>
+        <div class="p-4 mb-2 bg-dark rounded-3">
+            <div class="container-fluid py-5">
+                <img src="../../assets/extension_icons/icon_128.png" class="img-fluid">
+                <h1 class="display-5 fw-bold">Nifi Utils</h1>
+                <p class="col fs-4">This extension eases the process of maintaining huge production nifi instances with
+                    numerous flows.</p>
+                <br>
+                <a href="https://github.com/karthikchiru12/Nifi-Utils-Chrome-Extension"><img
+                        src="../../assets/misc_icons/github.svg" class="img-fluid"></img></a>
+                <br><br>
+                <div class="alert" role="alert" id="description_message">
+                    <h4 class="alert-heading" id="status">Successfully Installed...!</h4>
+                    <p>This extension <u>only works on Nifi instances that are deployed / productionized</u>. When
+                        installed, it identifies when a logged-in Nifi instance is opened in the currently active tab in
+                        the browser. Then it inserts a <u>content script</u>, which retrieves the <b>JWT</b> (JSON Web
+                        Token) and hostname from the currently active tab to the extension. Then using that token and
+                        the instance`s hostname, one can retrieve a list of all the process groups present on the
+                        screen, bookmark any process group by adding it to the queue, and search for any process group.
+                        All the results by any of the features provided are cached to be viewed later. The operation of
+                        getting the hostname and JWT token should be performed, whenever the user wants to fetch or
+                        search for new data or update existing data. All the cached results will be made available to be
+                        searched from the chrome`s omni box directly.</p>
+                    <hr>
+                    <p class="mb-0">Anger is a statement, well like a statement after <code>return;</code> statement. It
+                        is of no use. But on the other hand, constructive criticism is definitely of some use. So, if
+                        you find any bugs or you don't like this extension, Be patient & provide feedback on the same.
+                        Will try to improve it to the best of my ability.
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <div style="margin-left: auto; padding: 10px;display: inline-block;">
-        <img src="../../assets/screenshots/popup.png" style="width:75%; height:75%; border: 1px solid #4CAAB8;">
+        <br><br>
+
+        <div class="container-fluid">
+            <div class="row gx-4">
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Getting Current Instance</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">Whenever a Nifi instance is opened in the current tab.<br>This is the
+                                <u>first step</u> that needs to be performed.
+                            </p>
+                            <img src="../../assets/screenshots/1.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>When the button &nbsp; <button class="btn btn-primary">Get Instance</button> &nbsp; is
+                                clicked, the extension detects if a Nifi instance is opened in the current tab in the
+                                browser. </li><br>
+                            <li>And the hostname will be displayed inside the extension.</li><br>
+                            <li>And then it enables the buttons &nbsp;<button class="btn btn-primary">Fetch Process
+                                    Groups</button> &nbsp; &<br><button class="btn btn-primary">Search</button>
+                                &nbsp; .</li>
+                        </ul>
+
+
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="row gx-4">
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>When the button &nbsp; <button class="btn btn-primary">Fetch Process groups</button>
+                                &nbsp; is
+                                clicked, the extension retrieves all the process groups present on the screen in Nifi
+                                into a HTML table inside the extension. </li><br>
+                            <li>And the records can be filtered by searching for a process group name. Also the process
+                                groups can be sorted by number of running, stopped, invalid, disabled processor counts
+                                by clicking on the corresponding column name.</li><br>
+                            <li>
+                                And when the &nbsp; <button class="btn btn-primary">Clear</button>
+                                &nbsp; is clicked, the cached process groups is cleared.
+                            </li>
+                        </ul>
+
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Fetching Process Groups</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">All process groups visible on the current Nifi screen are fetched
+                                inside the extension.</p>
+                            <img src="../../assets/screenshots/2.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="row gx-4">
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Adding To The queue</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">The process groups can be bookmarked, by adding them to the queue.</p>
+                            <img src="../../assets/screenshots/3.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-auto">
+
+                    <div>
+                        <ul>
+                            <li>When the button &nbsp; <button class="btn btn-primary">+</button>
+                                &nbsp; is
+                                clicked, the corresponding process group is added to the queue. </li><br>
+                            <li>Alternatively, all process groups can be added to the queue by clicking on the &nbsp;
+                                <button class="btn btn-primary">Add all items to queue</button>
+                                &nbsp; button. </li><br>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="row gx-4">
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>When the button &nbsp; <button class="btn btn-primary">-</button>
+                                &nbsp; is
+                                clicked, the corresponding process group is removed from the queue.</li><br>
+                                <li>The queue will be copied onto the clipboard in the form of CSV data, by clicking on the &nbsp; <button class="btn btn-primary">Copy</button>
+                                    &nbsp; button. </li><br>
+                                <li>The items cached in the queue will be cleared, by clicking on the &nbsp; <button class="btn btn-primary">Clear Queue</button>
+                                        &nbsp; button. </li><br>
+                        </ul>
+
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Managing the queue</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">Items in the queue can be cleared or copied onto the clipboard as CSV
+                                data.</p>
+                            <img src="../../assets/screenshots/4.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="row gx-4">
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Global Search For Process Groups</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">Unlike fetch process groups, which just fetches the process groups present on the screen, This feature searches for the given keyword in whole of the current Nifi instance.</p>
+                            <img src="../../assets/screenshots/5.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>When the button &nbsp; <button class="btn btn-primary">Search</button>
+                                &nbsp; is
+                                clicked, with some keyword provided in the search box, the search results are fetched and displayed inside the extension.</li><br>
+                                <li>The search results will be copied onto the clipboard in the form of CSV data, by clicking on the &nbsp; <button class="btn btn-primary">Copy Search Results</button>
+                                    &nbsp; button. </li><br>
+                                <li>The items cached in the search results will be cleared, by clicking on the &nbsp; <button class="btn btn-primary">Clear Search Results</button>
+                                        &nbsp; button. </li><br>
+                        </ul>
+
+
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br><br><br><br><br>
+            <div class="row gx-4">
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>
+                                Typing the keyword <h1><b>nu</b></h1> and then pressing <h1><b>spacebar</b></h1> key in the chrome`s search bar will enable omni box search. Where all the process groups can be searched and opened in a jiffy.
+                            </li>                                
+                        </ul>
+
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Searching Directly From Omni Box</h5>
+                        <div class="card-body">
+                            
+                            <p class="card-text">Once any process group is fetched/searched for from any instance, it will be available to be searched from the chrome search itself. Even when the cached items inside the extension are cleared.</p>
+                            <img src="../../assets/screenshots/6.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br><br><br><br><br><br><br><br><br><br>
+        <script src="../../bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="../js/misc.js"></script>
     </div>
 </body>
 
