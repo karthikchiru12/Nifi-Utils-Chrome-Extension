@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../../bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" href="../css/utils_home.css">
+  <link rel="stylesheet" href="../css/home.css">
   <link rel="stylesheet" href="../css/misc.css">
   <title>Nifi Utils</title>
 </head>
@@ -24,9 +24,6 @@
     <br><br>
     <div id="basic-controls">
       <h3 class="h3 text-indigo">Basic Controls</h3><br>
-      <button id="getInstanceName" class="btn btn-sm btn-primary"
-        title="If a nifi instance is opened in active tab&#013;Retrieves the nifi instance host name">Get
-        Instance</button><br><br>
       <button id="goToQueue" class="btn btn-sm btn-primary" title="Scroll to the queue">Go to queue</button><br><br>
       <button id="goToGlobalSearch" class="btn btn-sm btn-primary" title="Scroll to the global search">Go to
         search</button>
@@ -46,7 +43,7 @@
     <hr class="border border-primary border-2 opacity-75">
     <div class="queue">
       <h3 class="h3 text-indigo">Queue</h3><br>
-      <button id="clearQueue" class="btn btn-sm btn-primary" title="Clears the queue">Clear Queue</button><br><br>
+      <button id="clearQueue" class="btn btn-sm btn-primary" title="Clears the queue">Clear Queue</button><br>
       <button id="copyQueue" class="btn btn-sm btn-primary" title="Copies the queue data in csv format">Copy
         Queue</button><br><br>
       <div id="queueTableResult"></div>
@@ -56,10 +53,10 @@
       <h3 class="h3 text-indigo">Global Search</h3><br>
       <input type="text" id="search_keyword" class="form-control form-control-sm w-auto" placeholder="Type the keyword to search"><br>
       <button id="getSearchResults" class="btn btn-sm btn-primary"
-        title="Searches for given keyword&#013;In the current Nifi instance&#013;(Only process group level)">Search</button><br><br>
+        title="Searches for given keyword&#013;In the current Nifi instance&#013;(Only process group level)">Search</button><br>
       <button id="copySearchResults" class="btn btn-sm btn-primary"
         title="Copies the search results data in csv format">Copy
-        Search Results</button><br><br>
+        Search Results</button><br>
       <button id="clearGlobalSearchResult" class="btn btn-sm btn-primary" title="Clears the search results">Clear Search
         Results</button><br>
       <div id="globalSearchResult"></div>

@@ -59,8 +59,37 @@ try {
             OutPut = "";
         }
         return OutPut;
-    };
+    }
+
+    chrome.tabs.onActivated.addListener(() => {
+        chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+            if (tabs[0].url.toString().includes(`/nifi/`)) {
+                chrome.action.setBadgeText({ text: `•` });
+                chrome.action.setBadgeBackgroundColor({ color: "green" });
+                chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
+            }
+            else {
+                chrome.action.setBadgeText({ text: `` });
+                chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\nType\n\n"nu" + "spacebar"\n\nAnd then type\nkeyword\nto search\n\n` });
+            }
+        });
+    });
+
+    chrome.tabs.onUpdated.addListener(() => {
+        chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+            if (tabs[0].url.toString().includes(`/nifi/`)) {
+                chrome.action.setBadgeText({ text: `•` });
+                chrome.action.setBadgeBackgroundColor({ color: "green" });
+                chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
+            }
+            else {
+                chrome.action.setBadgeText({ text: `` });
+                chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\nType\n\n"nu" + "spacebar"\n\nAnd then type\nkeyword\nto search\n\n` });
+            }
+        });
+    });
+
 }
-catch (e) {
-    console.log(e);
+catch (error) {
+    console.log(error);
 }

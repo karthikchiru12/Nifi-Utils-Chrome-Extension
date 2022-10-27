@@ -25,7 +25,7 @@ chrome.storage.local.get(["search_data_store"], (item) => {
     }
 });
 
-document.getElementById("getInstanceName").addEventListener("click", (event) => {
+document.addEventListener("DOMContentLoaded", (event) => {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
         console.log(tabs[0].url);
         var instance = new URL(tabs[0].url).host.toString();
@@ -37,11 +37,8 @@ document.getElementById("getInstanceName").addEventListener("click", (event) => 
             document.getElementById("getSearchResults").style.display = "block";
             document.getElementById("search_keyword").style.display = "block";
         }
-        else {
-            alert("Please open this extension when a nifi instance is opened and is your current active tab!");
-        }
     });
-});
+})
 
 
 document.querySelector('#clearProcessGroupsResult').addEventListener("click", (event) => {
