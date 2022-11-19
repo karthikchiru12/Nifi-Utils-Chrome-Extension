@@ -121,6 +121,7 @@ document.getElementById("getProcessGroups").addEventListener("click", (event) =>
                                     var stopped_components = pg_item["component"]["stoppedCount"];
                                     var invalid_components = pg_item["component"]["invalidCount"];
                                     var disabled_components = pg_item["component"]["disabledCount"];
+                                    var variables = pg_item["component"]["variables"];
                                     var queued_data = pg_item["status"]["aggregateSnapshot"]["queued"];
 
                                     pg_data_store["data"].push(
@@ -131,6 +132,7 @@ document.getElementById("getProcessGroups").addEventListener("click", (event) =>
                                             "stopped": stopped_components,
                                             "invalid": invalid_components,
                                             "disabled": disabled_components,
+                                            "variables": variables,
                                             "queued": parseInt(queued_data.split(" ")[0].replaceAll(",", "")),
                                             "queued_data": queued_data.split(" ")[1].replace("(", "") + " " + queued_data.split(" ")[2].replace(")", "")
                                         }
@@ -252,16 +254,24 @@ function setProcessGroupResult(store_object) {
         resultString += `<td>${row_index}</td>`;
         resultString += `<td><div title="${element["pg_id"]}" id="process_group_name">
             ${element["pg_name"]}<br><br>
-            <span ">Link :</span>
-            <a style="text-decoration:none; color:tomato;" title="${store_object["instance_fetched_from"]}" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${element["pg_id"]}" target="_blank">Open</a><br><br>
-            </div></td>`;
+            <span>Link :</span>
+            <a style="text-decoration:none; color:tomato;" title="${store_object["instance_fetched_from"]}" href="https://${store_object["instance_fetched_from"]}/nifi/?processGroupId=${element["pg_id"]}" target="_blank">Open</a><br><br>`;
+        if (Object.keys(element["variables"]).length > 0) {
+            resultString += `<a style="text-decoration:none; color:#189AB4;" data-bs-toggle="collapse" href="#var-${element["pg_id"]}" aria-expanded="false" aria-controls="var-${element["pg_id"]}">
+            Variables ></a><br><br>`;
+            resultString += `<div class="collapse" id="var-${element["pg_id"]}"><p>`;
+            Object.keys(element["variables"]).forEach((variable) => {
+                resultString += `<span style="color:wheat;">${variable}</span> : <pre>${element["variables"][variable].toString().replaceAll(`<`, `&lt;`).replaceAll(`>`, `&gt;`)}</pre><br>`;
+            });
+            resultString += `</div>`;
+        }
+        resultString += `</div></td>`;
         resultString += `<td>${element["running"]}</td>`;
         resultString += `<td>${element["stopped"]}</td>`;
         resultString += `<td>${element["invalid"]}</td>`;
         resultString += `<td>${element["disabled"]}</td>`;
         resultString += `<td>${element["queued"]}</td>`;
         resultString += `<td>${element["queued_data"]}</td></tr>`;
-
         row_index += 1;
     });
     resultString += `</tbody></table>`;
@@ -279,7 +289,8 @@ document.body.addEventListener("keyup", (event) => {
             let pg_name = rows[index].getElementsByTagName("td")[2];
             if (pg_name) {
                 let pg_name_text = pg_name.textContent || pg_name.innerText;
-                if (pg_name_text.toString().toLowerCase().indexOf(search_value) > -1) {
+                pg_name_text = pg_name_text.toString().split(`Link :`)[0].toLowerCase();
+                if (pg_name_text.indexOf(search_value) > -1) {
                     rows[index].style.display = "";
                 }
                 else {
@@ -645,10 +656,10 @@ window.addEventListener('DOMContentLoaded', (event) => {
         var omni_data_store = item["omni_data_store"];
         var text = document.getElementById("omni-store-size").innerText;
         if (omni_data_store != null && omni_data_store != undefined) {
-            document.getElementById("omni-store-size").innerText = text + " " +Object.keys(omni_data_store).length.toString();
+            document.getElementById("omni-store-size").innerText = text + " " + Object.keys(omni_data_store).length.toString();
         }
         else {
             document.getElementById("omni-store-size").innerText = text + " 0";
         }
     });
-}); 
+});
