@@ -1,8 +1,10 @@
-chrome.storage.local.get(["options_data_store"], (item) => {
-    var itemValue = item["options_data_store"];
-    if (itemValue != null && itemValue != undefined) {
-        Object.keys(itemValue).forEach((element) => {
-            if (itemValue[element] == "enabled") {
+/************************************************************************************************************/
+
+chrome.storage.local.get(["optionsDataStore"], (item) => {
+    var optionsDataStore = item["optionsDataStore"];
+    if (optionsDataStore != null && optionsDataStore != undefined) { // Updates the UI with current options
+        Object.keys(optionsDataStore).forEach((element) => {
+            if (optionsDataStore[element] == "enabled") {
                 document.getElementsByName(element)[0].checked = "true";
             }
             else {
@@ -10,39 +12,43 @@ chrome.storage.local.get(["options_data_store"], (item) => {
             }
         });
     }
-    else {
-        var options_obj = {};
-        options_obj["copy_jwt_token_component"] = "disabled";
-        options_obj["copy_link_component"] = "disabled";
-        options_obj["enable_all_controller_services_component"] = "disabled";
-        options_obj["disable_all_controller_services_component"] = "disabled";
-        chrome.storage.local.set({ "options_data_store": options_obj }, () => {
+    else { // Initialize the optionsDataStore for the first time
+        var optionsObj = {};
+        optionsObj["copy_jwt_token_component"] = "disabled";
+        optionsObj["copy_link_component"] = "disabled";
+        optionsObj["enable_all_controller_services_component"] = "disabled";
+        optionsObj["disable_all_controller_services_component"] = "disabled";
+        chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
             console.log("Saved!");
         });
         window.location.reload();
     }
 });
 
+/************************************************************************************************************/
+
 document.getElementById("saveCurrentOptions").addEventListener("click", (event) => {
-    chrome.storage.local.get(["options_data_store"], (item) => {
-        var itemValue = item["options_data_store"];
-        if (itemValue != null && itemValue != undefined) {
-            Object.keys(itemValue).forEach((element) => {
+    chrome.storage.local.get(["optionsDataStore"], (item) => {
+        var optionsDataStore = item["optionsDataStore"];
+        if (optionsDataStore != null && optionsDataStore != undefined) {
+            Object.keys(optionsDataStore).forEach((element) => {
                 if (document.getElementsByName(element)[0].checked) {
-                    itemValue[element] = "enabled";
+                    optionsDataStore[element] = "enabled";
                     console.log(document.getElementsByName(element)[0].checked);
                 }
                 else {
-                    itemValue[element] = "disabled";
+                    optionsDataStore[element] = "disabled";
                 }
             });
-            chrome.storage.local.set({ "options_data_store": itemValue }, () => {
+            chrome.storage.local.set({ "optionsDataStore": optionsDataStore }, () => {
                 console.log("Saved!");
             });
-            console.log(itemValue);
+            console.log(optionsDataStore);
             alert("Options saved!...");
         }
     });
 
 
 });
+
+/************************************************************************************************************/

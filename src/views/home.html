@@ -14,11 +14,16 @@
 <body>
   <div class="container-fluid">
     <br><br>
-    <a href="../views/about.html?status=tutorial" target="_blank" style="text-decoration: none; color :white; cursor:help;"><h2 class="h2" style="white-space:nowrap;"><img class="img-fluid" src="../../assets/extension_icons/icon_48.png">Nifi Utils</h2></a>
-    <p class="p" id="utc-time" style="white-space:nowrap;">loading...</p>
-    </span><p class="p" id="omni-store-size">Search store size : </p><br>
+    <a href="../views/about.html?status=tutorial" target="_blank"
+      style="text-decoration: none; color :white; cursor:help;">
+      <h2 class="h2" style="white-space:nowrap;"><img class="img-fluid"
+          src="../../assets/extension_icons/icon_48.png">Nifi Utils</h2>
+    </a>
+    <p class="p" id="utcTime" style="white-space:nowrap;">loading...</p>
+    </span>
+    <p class="p" id="omniStoreSize">Search store size : </p><br>
     <p class="p">Instance :</p>
-    <div id="instance-name" class="border">
+    <div id="instanceName" class="border">
       Not Connected
     </div>
     <br><br>
@@ -46,21 +51,26 @@
       <button id="clearQueue" class="btn btn-sm btn-primary" title="Clears the queue">Clear Queue</button><br>
       <button id="copyQueue" class="btn btn-sm btn-primary" title="Copies the queue data in csv format">Copy
         Queue</button><br><br>
-      <div id="queueTableResult"></div>
+      <div id="queueResult"></div>
     </div>
     <hr class="border border-primary border-2 opacity-75">
     <div class="globalSearch">
       <h3 class="h3 text-indigo">Global Search</h3><br>
-      <input type="text" id="search_keyword" class="form-control form-control-sm w-auto" placeholder="Type the keyword to search"><br>
+      <input type="text" id="searchKeyword" class="form-control form-control-sm w-auto"
+        placeholder="Type the keyword to search"><br>
       <button id="getSearchResults" class="btn btn-sm btn-primary"
         title="Searches for given keyword&#013;In the current Nifi instance&#013;(Only process group level)">Search</button><br>
       <button id="copySearchResults" class="btn btn-sm btn-primary"
         title="Copies the search results data in csv format">Copy
         Search Results</button><br>
-      <button id="clearGlobalSearchResult" class="btn btn-sm btn-primary" title="Clears the search results">Clear Search
+      <button id="clearSearchResult" class="btn btn-sm btn-primary" title="Clears the search results">Clear Search
         Results</button><br>
-      <div id="globalSearchResult"></div>
+      <div id="searchResult"></div>
     </div>
+    <!-- <hr class="border border-primary border-2 opacity-75">
+    <div class="controllerServices">
+      <h3 class="h3 text-indigo">Controller<br>Services</h3><br>
+    </div> -->
     <br><br>
   </div>
   <script src="../../bootstrap/bootstrap.bundle.min.js"></script>

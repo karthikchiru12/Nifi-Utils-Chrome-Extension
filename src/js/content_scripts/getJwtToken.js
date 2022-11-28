@@ -1,8 +1,10 @@
+/************************************************************************************************************/
+
 try {
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
-            if (request.action_name == "getJwtToken") {
-                sendResponse({ data: localStorage.getItem("jwt"), action_name: "getJwtToken" });
+            if (request.actionName == "getJwtToken") {
+                sendResponse({ data: localStorage.getItem("jwt"), actionName: "jwtToken" });
             }
         });
     console.log("Nifi Utils - getJwtToken: Content Script is successfully injected.");
@@ -10,3 +12,5 @@ try {
 catch (error) {
     console.log(error);
 }
+
+/************************************************************************************************************/

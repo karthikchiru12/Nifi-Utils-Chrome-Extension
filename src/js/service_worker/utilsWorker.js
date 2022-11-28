@@ -1,14 +1,14 @@
 try {
-    var omni_data_store = {};
+    var finalOmniDataStore = {};
 
     chrome.runtime.onInstalled.addListener(function (event) {
-        if (event.reason == "install") {
+        if (event.reason == `install`) {
             chrome.tabs.create({
-                url: "src/views/about.html?status=installed"
+                url: `src/views/about.html?status=installed`
             });
         }
-        if (event.reason == "update") {
-            const version = chrome.runtime.getManifest()["version"];
+        if (event.reason == `update`) {
+            const version = chrome.runtime.getManifest()[`version`];
             chrome.tabs.create({
                 url: `src/views/about.html?status=updated&version=${version}`
             });
@@ -17,25 +17,25 @@ try {
 
     chrome.omnibox.onInputChanged.addListener(
         function (text, suggest) {
-            console.log('inputChanged: ' + text);
-            var search_results = [];
+            console.log(`inputChanged: ` + text);
+            var searchResults = [];
 
-            Object.entries(omni_data_store).forEach((element) => {
+            Object.entries(finalOmniDataStore).forEach((element) => {
                 if (element[1].toLowerCase().includes(text.toLowerCase())) {
-                    search_results.push({ content: `https://${element[0].split(",")[1]}/nifi/?processGroupId=${element[0].split(",")[0]}`, description: `(${element[0].split(",")[1]}) ${EncodeXMLEscapeChars(element[1])}` })
+                    searchResults.push({ content: `https://${element[0].split(",")[1]}/nifi/?processGroupId=${element[0].split(",")[0]}`, description: `(${element[0].split(",")[1]}) ${EncodeXMLEscapeChars(element[1])}` })
                 }
             });
 
-            suggest(search_results);
+            suggest(searchResults);
         });
 
 
     chrome.omnibox.onInputStarted.addListener(
         function () {
-            chrome.storage.local.get(["omni_data_store"], (item) => {
-                var itemValue = item["omni_data_store"];
-                if (itemValue != null && itemValue != undefined) {
-                    omni_data_store = itemValue;
+            chrome.storage.local.get([`omniDataStore`], (item) => {
+                var omniDataStore = item[`omniDataStore`];
+                if (omniDataStore != null && omniDataStore != undefined) {
+                    finalOmniDataStore = omniDataStore;
                 }
             });
         }
@@ -61,11 +61,11 @@ try {
         return OutPut;
     }
 
-    chrome.tabs.onActivated.addListener(() => {
+    chrome.tabs.onActivated.addListener(() => { // On tab active
         chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
             if (tabs[0].url.toString().includes(`/nifi/`)) {
                 chrome.action.setBadgeText({ text: `•` });
-                chrome.action.setBadgeBackgroundColor({ color: "green" });
+                chrome.action.setBadgeBackgroundColor({ color: `green` });
                 chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
             }
             else {
@@ -75,11 +75,11 @@ try {
         });
     });
 
-    chrome.tabs.onUpdated.addListener(() => {
+    chrome.tabs.onUpdated.addListener(() => { // On tab updated
         chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
             if (tabs[0].url.toString().includes(`/nifi/`)) {
                 chrome.action.setBadgeText({ text: `•` });
-                chrome.action.setBadgeBackgroundColor({ color: "green" });
+                chrome.action.setBadgeBackgroundColor({ color: `green` });
                 chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
             }
             else {
