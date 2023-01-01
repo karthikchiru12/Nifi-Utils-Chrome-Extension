@@ -346,6 +346,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                         var stoppedComponents = pgItem[`component`][`stoppedCount`];
                                         var invalidComponents = pgItem[`component`][`invalidCount`];
                                         var disabledComponents = pgItem[`component`][`disabledCount`];
+                                        var activeThreadCount = pgItem[`status`][`aggregateSnapshot`][`activeThreadCount`];
                                         var variables = pgItem[`component`][`variables`];
                                         var queuedData = pgItem[`status`][`aggregateSnapshot`][`queued`];
 
@@ -357,6 +358,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                                 "stopped": stoppedComponents,
                                                 "invalid": invalidComponents,
                                                 "disabled": disabledComponents,
+                                                "threads" : activeThreadCount,
                                                 "variables": variables,
                                                 "queued": parseInt(queuedData.split(" ")[0].replaceAll(",", "")),
                                                 "queuedData": queuedData.split(" ")[1].replace("(", "") + " " + queuedData.split(" ")[2].replace(")", "")
@@ -368,6 +370,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                     pgDataStore[`stopped_head`] = `default`;
                                     pgDataStore[`invalid_head`] = `default`;
                                     pgDataStore[`disabled_head`] = `default`;
+                                    pgDataStore[`threads_head`] = `default`;
                                     pgDataStore[`queued_head`] = `default`;
 
                                     console.log(pgDataStore);
@@ -460,6 +463,7 @@ function setProcessGroupTable(storeObject) {
     resultString += `<th style="cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">Stopped</th>`;
     resultString += `<th style="cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">Invalid</th>`;
     resultString += `<th style="cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">Disabled</th>`;
+    resultString += `<th style="cursor: pointer;" id="threads_head">Threads</th>`;
     resultString += `<th style="cursor: pointer;" id="queued_head">Queued<br>Count</th>`;
     resultString += `<th style="">Queued<br>Data</th></tr>`;
 
@@ -470,13 +474,13 @@ function setProcessGroupTable(storeObject) {
         resultString += `<td><button id="add-to-queue" class="btn btn-sm btn-primary" style="margin:10px;">+</button></td>`;
         resultString += `<td>${rowIndex}</td>`;
         resultString += `<td><div title="${element["pgId"]}" id="process_group_name">
-            ${element["pgName"]}<br><br>
+            <div style="max-width: 25ch;overflow-wrap: break-word;">${element["pgName"]}</div><br><br>
             <span>Link :</span>
             <a style="text-decoration:none; color:tomato;" title="${storeObject["instanceFetchedFrom"]}" href="https://${storeObject["instanceFetchedFrom"]}/nifi/?processGroupId=${element["pgId"]}" target="_blank">Open</a><br><br>`;
         if (Object.keys(element["variables"]).length > 0) {
             resultString += `<a style="text-decoration:none; color:#189AB4;" data-bs-toggle="collapse" href="#var-${element["pgId"]}" aria-expanded="false" aria-controls="var-${element["pgId"]}">
             Variables ></a><br><br>`;
-            resultString += `<div class="collapse" id="var-${element["pgId"]}"><p>`;
+            resultString += `<div class="collapse" id="var-${element["pgId"]}">`;
             Object.keys(element["variables"]).forEach((variable) => {
                 resultString += `<span style="color:wheat;">${variable}</span> : <pre>${element["variables"][variable].toString().replaceAll(`<`, `&lt;`).replaceAll(`>`, `&gt;`)}</pre><br>`;
             });
@@ -487,6 +491,7 @@ function setProcessGroupTable(storeObject) {
         resultString += `<td>${element["stopped"]}</td>`;
         resultString += `<td>${element["invalid"]}</td>`;
         resultString += `<td>${element["disabled"]}</td>`;
+        resultString += `<td>${element["threads"]}</td>`;
         resultString += `<td>${element["queued"]}</td>`;
         resultString += `<td>${element["queuedData"]}</td></tr>`;
         rowIndex += 1;
