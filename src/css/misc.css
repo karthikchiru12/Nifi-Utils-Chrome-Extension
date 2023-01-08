@@ -16,6 +16,15 @@ body {
     font-weight: 600;
 }
 
+.btn-signin-google
+{
+    display : none;
+    opacity: 80%;
+}
+.btn-signin-google:hover {
+    opacity: 100%;
+}
+
 #status {
     color: aqua;
     font-weight: 500;

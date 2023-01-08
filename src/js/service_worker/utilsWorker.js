@@ -1,3 +1,6 @@
+/************************************************************************************************************/
+
+
 try {
     var finalOmniDataStore = {};
 
@@ -7,7 +10,7 @@ try {
                 url: `src/views/about.html?status=installed`
             });
         }
-        if (event.reason == `update`) {
+        if (event.reason == `update`) { 
             const version = chrome.runtime.getManifest()[`version`];
             chrome.tabs.create({
                 url: `src/views/about.html?status=updated&version=${version}`
@@ -92,4 +95,62 @@ try {
 }
 catch (error) {
     console.log(error);
+}
+
+/************************************************************************************************************/
+
+try {
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse) {
+            if (request.actionName == "loadEnvironmentsContextMenu") {
+                var environmentCountsDataStore;
+                chrome.contextMenus.removeAll(
+                    () => {
+                        console.log("Cleared the context menus");
+                    }
+                );
+                chrome.storage.local.get([`environmentCountsDataStore`], (item) => {
+                    var environmentCountsDataStore = item[`environmentCountsDataStore`];
+                    if (environmentCountsDataStore != null && environmentCountsDataStore != undefined) {
+                        chrome.contextMenus.create({
+                            title: "Open environment",
+                            id: "parentMenu",
+                            contexts: ["all"]
+                        }, () => {
+                            console.log(chrome.runtime.lastError)
+                        });
+                        Object.keys(environmentCountsDataStore).forEach((environment) => {
+                            chrome.contextMenus.create({
+                                id: environment,
+                                title: environment + ` : ` + environmentCountsDataStore[environment],
+                                parentId: "parentMenu",
+                                contexts: ["all"]
+                            }, () => {
+                                console.log(chrome.runtime.lastError)
+                            });
+                        });
+                        sendResponse({ status: "success" });
+                    }
+                });
+
+            }
+        });
+}
+catch (error) {
+    console.log(error);
+}
+
+
+chrome.contextMenus.onClicked.addListener((event) => {
+    chrome.tabs.create({
+        url: `https://${event.menuItemId}/nifi`
+    });
+});
+
+
+try {
+
+}
+catch (error) {
+    console.log(error)
 }

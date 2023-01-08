@@ -106,7 +106,7 @@ async function getActiveTab() {
 
 }
 
-async function sendMessage(tabId, message) {
+async function sendMessageToContext(tabId, message) {
     /*
        Sends a message to any content script functions.
        And then returns the response returned by the content script function.
@@ -120,12 +120,42 @@ async function sendMessage(tabId, message) {
        --------------------
        response : Promise
 
-                   Returns tab id, url, hostname if fetching active tab details is successful.
-                   Returns the value false, if fetching active tab details fails.
+                   Returns response object if the message is successfully sent.
+                   Returns the value false, if sending message fails.
     */
     try {
 
         var response = await chrome.tabs.sendMessage(tabId, message);
+        if (response) {
+            return response;
+        }
+    }
+    catch (error) {
+        console.log(`There was an error in sending the message : ${error}`);
+        alert(`Reload nifi page and then try again!...`);
+        return false;
+    }
+}
+
+async function sendMessageToBackground(message) {
+    /*
+       Sends a message to background script.
+       And then returns the response returned by the background script function.
+
+       parameters
+       --------------------
+       message : Object
+
+       returns
+       --------------------
+       response : Promise
+
+                   Returns response object if the message is successfully sent.
+                   Returns the value false, if sending message fails.
+    */
+    try {
+
+        var response = await chrome.runtime.sendMessage(message);
         if (response) {
             return response;
         }
@@ -190,11 +220,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
     getCachedItem(`omniDataStore`).then((omniDataStore) => {
         if (omniDataStore) {
             omniStoreSize.innerText = omniStoreSize.innerText + ` ${Object.keys(omniDataStore).length}`;
+            updateEnvironmentCountsList();
         }
         else {
             omniStoreSize.innerText = omniStoreSize.innerText + ` 0`;
         }
     });
+
+    getCachedItem(`optionsDataStore`)
+        .then((data) => {
+            if (data[`upload_to_drive_component`] != `enabled`) {
+                document.getElementById(`signIn`).style.display = `none`;
+            }
+        });
 
 
 
@@ -307,7 +345,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
         console.log(tabId, url, hostname);
         if (tabId) { // When active tab properties are successfully fetched
             var messageRequest = { actionName: `getJwtToken` };
-            sendMessage(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
+            sendMessageToContext(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
                 if (messageResponse) {
                     if (messageResponse.actionName == `jwtToken`) {
                         // Set the loading spinner while the below statements are executed.
@@ -358,7 +396,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                                 "stopped": stoppedComponents,
                                                 "invalid": invalidComponents,
                                                 "disabled": disabledComponents,
-                                                "threads" : activeThreadCount,
+                                                "threads": activeThreadCount,
                                                 "variables": variables,
                                                 "queued": parseInt(queuedData.split(" ")[0].replaceAll(",", "")),
                                                 "queuedData": queuedData.split(" ")[1].replace("(", "") + " " + queuedData.split(" ")[2].replace(")", "")
@@ -397,7 +435,11 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                             finalOmniDataStore = tempDataStore;
                                         }
                                         setCachedItem(`omniDataStore`, finalOmniDataStore);
+                                        //Updating environment counts
+                                        updateEnvironmentCountsList();
                                     });
+
+
 
                                 }
                             }).catch((error) => {
@@ -705,7 +747,7 @@ document.getElementById(`getSearchResults`).addEventListener(`click`, () => {
         console.log(tabId, url, hostname);
         if (tabId) {
             var messageRequest = { actionName: `getJwtToken` };
-            sendMessage(tabId, messageRequest).then((messageResponse) => {
+            sendMessageToContext(tabId, messageRequest).then((messageResponse) => {
                 if (messageResponse) {
                     if (messageResponse.actionName == `jwtToken`) {
                         document.getElementById(`searchResult`).innerHTML = `<br><div class="spinner-border text-light" role="status">
@@ -715,7 +757,7 @@ document.getElementById(`getSearchResults`).addEventListener(`click`, () => {
                         var token = JSON.parse(messageResponse.data)[`item`];
                         var url = `https://${hostname}/nifi-api/flow/search-results`;
                         var searchKeyword = document.getElementById(`searchKeyword`).value;
-                        if (searchKeyword != `` && searchKeyword != undefined && searchKeyword != undefined) {
+                        if (searchKeyword != `` && searchKeyword != undefined && searchKeyword != null) {
                             url = url + `?q=${searchKeyword}&a=root`;
                             var request = { "method": "GET", "headers": { "Authorization": `Bearer ${token}` } };
                             fetchData(url, request, `searchResults`).then((data) => {
@@ -778,6 +820,9 @@ document.getElementById(`getSearchResults`).addEventListener(`click`, () => {
                                         }
                                         setCachedItem(`omniDataStore`, finalOmniDataStore);
                                     });
+
+                                    //Updating environment counts
+                                    updateEnvironmentCountsList();
 
                                 }
                             }).catch((error) => {
@@ -930,3 +975,71 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 //     console.log(error);
 //     alert(`Reload nifi page and then try again!...`);
 // });
+
+/************************************************************************************************************/
+
+function updateEnvironmentCountsList() {
+    getCachedItem(`omniDataStore`).then((omniDataStore) => {
+        var environmentCountsDataStore = {};
+        if (omniDataStore) {
+            Object.keys(omniDataStore).forEach((key) => {
+                let hostname = key.split(`,`)[1];
+                if (Object.keys(environmentCountsDataStore).includes(hostname)) {
+                    environmentCountsDataStore[hostname] += 1;
+                }
+                else {
+                    environmentCountsDataStore[hostname] = 1;
+                }
+            });
+            setCachedItem(`environmentCountsDataStore`, environmentCountsDataStore);
+            sendMessageToBackground(message = { actionName: "loadEnvironmentsContextMenu" }).then((messageResponse) => {
+                if (messageResponse) {
+                    if (messageResponse.status == "success") {
+                        console.log("Environments context menu successfully loaded.");
+                    }
+                    else {
+                        console.log("Environments context menu load failed.");
+                    }
+                }
+                else {
+                    console.log("Environments context menu load failed.");
+                }
+            });
+        }
+
+    });
+}
+
+/************************************************************************************************************/
+
+getCachedItem(`loggedIn`).
+    then((loggedIn) => {
+        if (loggedIn == "true") {
+            document.getElementById(`signIn`).style.display = `none`;
+            chrome.identity.getProfileUserInfo(
+                { accountStatus: 'ANY' },
+                (details) => {
+                    console.log(details);
+                    if (details.id != "" && details.email != "") {
+                        document.getElementById(`accountDetails`).innerHTML = `You are signed in as <b>${details.email}</b><br><br>
+                        <button class="btn btn-sm btn-primary" id="signOut">Signout</button>`;
+                    }
+                }
+            );
+        }
+    });
+
+document.getElementById(`signIn`).addEventListener(`click`, (event) => {
+    chrome.tabs.create({
+        url: `src/views/login.html`
+    });
+});
+
+
+document.addEventListener(`click`, (event) => {
+    if (event.target.id == `signOut`) {
+        setCachedItem(`loggedIn`, `false`);
+        window.location.reload();
+        chrome.identity.clearAllCachedAuthTokens();
+    }
+});

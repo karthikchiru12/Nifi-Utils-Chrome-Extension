@@ -1,15 +1,19 @@
 {
     "name": "Nifi Utils",
     "description": "This extension eases the process of maintaining huge production nifi instances with numerous flows.",
-    "version": "1.0.7",
+    "version": "1.0.8",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArsgHackMeidxHeIGv09aBUZ97rhHTJrFhKE2qr/iljePLCTqKdwUz1sSqWIfMzNfWQ6jW8Bk4NzXiA6UuGWWh9FuTXXDhWYd3ecRiit5E+mVrxjSV5qq+YtwuU8vsnnAEib6Z5we/dQNFyw00ztTV0w47M6E2sx6OOWFK5ope6d1TXV1k63q0CDkOYdORx1Zi+BoOBH4Hnv+FLziq2bMHtvXNnRLMJPDYxXWo47ZYVBA/LJLiioJyzbxUvtNOlA1dMzSM835PWqE+1gREh8Lz/3DdLlrBWIa+MXRC0FHpE0tb+tGs7lUlF+IzYcW+Vnc0gHLLrnIU/Y1rnRx3v9+4QIDAQAB",
     "permissions": [
         "storage",
         "activeTab",
-        "tabs"
+        "tabs",
+        "contextMenus",
+        "identity",
+        "identity.email"
     ],
-    "icons": 
-    {  "48": "assets/extension_icons/icon_48.png",
-       "128": "assets/extension_icons/icon_128.png" 
+    "icons": {
+        "48": "assets/extension_icons/icon_48.png",
+        "128": "assets/extension_icons/icon_128.png"
     },
     "content_scripts": [
         {
@@ -22,13 +26,21 @@
             ]
         }
     ],
-    "background" : {"service_worker" : "src/js/service_worker/utilsWorker.js"},
+    "background": {
+        "service_worker": "src/js/service_worker/utilsWorker.js"
+    },
     "manifest_version": 3,
     "action": {
         "default_popup": "src/views/home.html"
     },
+    "oauth2": {
+        "client_id": "<yourclientid>",
+        "scopes": [
+            "your app scope here"
+        ]
+    },
     "options_page": "src/views/options.html",
     "omnibox": {
         "keyword": "nu"
-      }
+    }
 }

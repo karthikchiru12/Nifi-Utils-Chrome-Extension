@@ -12,12 +12,13 @@ chrome.storage.local.get(["optionsDataStore"], (item) => {
             }
         });
     }
-    else { // Initialize the optionsDataStore for the first time
-        var optionsObj = {};
+    else {
+        var optionsObj = {}; // Initialize when first installed.
         optionsObj["copy_jwt_token_component"] = "disabled";
         optionsObj["copy_link_component"] = "disabled";
         optionsObj["enable_all_controller_services_component"] = "disabled";
         optionsObj["disable_all_controller_services_component"] = "disabled";
+        optionsObj["upload_to_drive_component"] = "disabled";
         chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
             console.log("Saved!");
         });
