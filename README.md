@@ -13,6 +13,8 @@ This extension eases the process of maintaining huge production nifi instances w
 
 - Once any process group is fetched/searched from any instance, it will be available to be searched from the chrome search itself indefinitely until the extension is uninstalled.
 
+- Custom UI components can be added to Nifi UI. You can backup your flows to google drive directly from the Nifi UI.
+
 
 ## Disclaimer
 
