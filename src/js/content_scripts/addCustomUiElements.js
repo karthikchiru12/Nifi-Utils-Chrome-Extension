@@ -203,7 +203,7 @@ try {
                                         "json", "createSnippet").then((snippetData) => {
                                             document.getElementById(`custom_upload_to_drive`).innerText = `Creating_snippet...`;
                                             var snippetId = snippetData[`snippet`][`id`].toString();
-                                            var templateName = `${uploadPgId} && ${uploadPgName} && ${new Date().getTime()} && ${uploadPgVersion}`;
+                                            var templateName = `${hostname} && ${uploadPgId} && ${uploadPgName} && ${new Date().getTime()} && ${uploadPgVersion}`;
                                             var createTemplateRequest =
                                             {
                                                 "method": "POST",
@@ -257,34 +257,52 @@ try {
                                                                     fetchWrapper(`https://www.googleapis.com/upload/drive/v3/files?uploadType=media`, uploadFileToDriveRequest,
                                                                         "json", "uploadFileToDrive")
                                                                         .then((fileData) => {
-                                                                            document.getElementById(`custom_upload_to_drive`).innerText = `Uploading...`;
-                                                                            var fileId = fileData.id;
-                                                                            var renameFileInDriveRequest =
-                                                                            {
-                                                                                "method": "PATCH",
-                                                                                "headers":
+                                                                            if (fileData) {
+                                                                                document.getElementById(`custom_upload_to_drive`).innerText = `Uploading...`;
+                                                                                var fileId = fileData.id;
+                                                                                var renameFileInDriveRequest =
                                                                                 {
-                                                                                    "Authorization": `Bearer ${oAuthToken}`,
-                                                                                    "Content-Type": "application/json"
-                                                                                },
-                                                                                "body": JSON.stringify({
-                                                                                    "name": templateName + `.xml`
-                                                                                })
-                                                                            };
-                                                                            fetchWrapper(`https://www.googleapis.com/drive/v3/files/${fileId}`, renameFileInDriveRequest,
-                                                                                "json", "renameFileInDrive")
-                                                                                .then((data) => {
-                                                                                    console.log(data);
-                                                                                    document.getElementById(`custom_upload_to_drive`).innerText = `Done...`;
-                                                                                    alert("Flow successfully backed up to your google drive!.");
-                                                                                })
-                                                                                .catch((error) => {
-                                                                                    console.log(error);
-                                                                                })
+                                                                                    "method": "PATCH",
+                                                                                    "headers":
+                                                                                    {
+                                                                                        "Authorization": `Bearer ${oAuthToken}`,
+                                                                                        "Content-Type": "application/json"
+                                                                                    },
+                                                                                    "body": JSON.stringify({
+                                                                                        "name": templateName + `.xml`
+                                                                                    })
+                                                                                };
+                                                                                fetchWrapper(`https://www.googleapis.com/drive/v3/files/${fileId}`, renameFileInDriveRequest,
+                                                                                    "json", "renameFileInDrive")
+                                                                                    .then((data) => {
+                                                                                        if (data) {
+                                                                                            console.log(data);
+                                                                                            document.getElementById(`custom_upload_to_drive`).innerText = `Done...`;
+                                                                                            alert("Flow successfully backed up to your google drive!.");
+                                                                                        }
+                                                                                        else {
+                                                                                            alert(`Please sign in again!...`);
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((error) => {
+                                                                                        console.log(error);
+                                                                                    });
+                                                                            }
+                                                                            else {
+                                                                                document.getElementById(`custom_upload_to_drive`).innerText = `Upload failed!`;
+                                                                                alert(`Please sign in again!...`);
+                                                                            }
 
                                                                         }).catch((error) => {
                                                                             console.log(error);
                                                                         });
+                                                                }
+                                                                else {
+                                                                    chrome.storage.local.set({ "loggedIn": "false" }, () => {
+                                                                        console.log("Saved!");
+                                                                    });
+                                                                    alert(`Please sign in again!...`);
+                                                                    document.getElementById(`custom_upload_to_drive`).innerText = `Upload failed!`;
                                                                 }
                                                             });
 

@@ -1,16 +1,15 @@
 /************************************************************************************************************/
 
-
 try {
     var finalOmniDataStore = {};
-
+    // Handling install and update events
     chrome.runtime.onInstalled.addListener(function (event) {
         if (event.reason == `install`) {
             chrome.tabs.create({
                 url: `src/views/about.html?status=installed`
             });
         }
-        if (event.reason == `update`) { 
+        if (event.reason == `update`) {
             const version = chrome.runtime.getManifest()[`version`];
             chrome.tabs.create({
                 url: `src/views/about.html?status=updated&version=${version}`
@@ -18,6 +17,7 @@ try {
         }
     });
 
+    // Handling input change in the omni search box
     chrome.omnibox.onInputChanged.addListener(
         function (text, suggest) {
             console.log(`inputChanged: ` + text);
@@ -33,6 +33,7 @@ try {
         });
 
 
+    // Handling the first time input change in the omni search box
     chrome.omnibox.onInputStarted.addListener(
         function () {
             chrome.storage.local.get([`omniDataStore`], (item) => {
@@ -44,6 +45,7 @@ try {
         }
     );
 
+    // When one of the options is selected in the omni search box
     chrome.omnibox.onInputEntered.addListener((text) => {
         const url = text;
         console.log(url);
@@ -67,6 +69,7 @@ try {
     chrome.tabs.onActivated.addListener(() => { // On tab active
         chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
             if (tabs[0].url.toString().includes(`/nifi/`)) {
+                // When active tab is a nifi instance.
                 chrome.action.setBadgeText({ text: `•` });
                 chrome.action.setBadgeBackgroundColor({ color: `green` });
                 chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
@@ -81,6 +84,7 @@ try {
     chrome.tabs.onUpdated.addListener(() => { // On tab updated
         chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
             if (tabs[0].url.toString().includes(`/nifi/`)) {
+                // When updated tab is a nifi instance.
                 chrome.action.setBadgeText({ text: `•` });
                 chrome.action.setBadgeBackgroundColor({ color: `green` });
                 chrome.action.setTitle({ tabId: tabs[0].id, title: `Nifi Utils\n\nFor help\nclick on the logo\ninside extension\n` });
@@ -103,8 +107,9 @@ try {
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             if (request.actionName == "loadEnvironmentsContextMenu") {
-                var environmentCountsDataStore;
+                // When omni search data store is updated 
                 chrome.contextMenus.removeAll(
+                    // Removing all the existing extension context menus
                     () => {
                         console.log("Cleared the context menus");
                     }
@@ -112,6 +117,7 @@ try {
                 chrome.storage.local.get([`environmentCountsDataStore`], (item) => {
                     var environmentCountsDataStore = item[`environmentCountsDataStore`];
                     if (environmentCountsDataStore != null && environmentCountsDataStore != undefined) {
+                        // Creating a parent context menu
                         chrome.contextMenus.create({
                             title: "Open environment",
                             id: "parentMenu",
@@ -120,6 +126,7 @@ try {
                             console.log(chrome.runtime.lastError)
                         });
                         Object.keys(environmentCountsDataStore).forEach((environment) => {
+                            // Creating child context menus
                             chrome.contextMenus.create({
                                 id: environment,
                                 title: environment + ` : ` + environmentCountsDataStore[environment],
@@ -140,17 +147,16 @@ catch (error) {
     console.log(error);
 }
 
-
-chrome.contextMenus.onClicked.addListener((event) => {
-    chrome.tabs.create({
-        url: `https://${event.menuItemId}/nifi`
-    });
-});
-
-
 try {
-
+    // Opening corresponding nifi environment, when clicked
+    chrome.contextMenus.onClicked.addListener((event) => {
+        chrome.tabs.create({
+            url: `https://${event.menuItemId}/nifi`
+        });
+    });
 }
 catch (error) {
     console.log(error)
 }
+
+/************************************************************************************************************/

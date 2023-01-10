@@ -227,12 +227,35 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
+    // If upload to drive component is not enabled, then disable the sign in button
     getCachedItem(`optionsDataStore`)
         .then((data) => {
             if (data[`upload_to_drive_component`] != `enabled`) {
                 document.getElementById(`signIn`).style.display = `none`;
             }
         });
+
+
+    // If user is already logged in, show the account details and a sign out button.
+    getCachedItem(`loggedIn`).
+        then((loggedIn) => {
+            if (loggedIn == "true") {
+                document.getElementById(`signIn`).style.display = `none`;
+                chrome.identity.getProfileUserInfo(
+                    { accountStatus: 'ANY' },
+                    (details) => {
+                        console.log(details);
+                        if (details.id != "" && details.email != "") {
+                            document.getElementById(`accountDetails`).innerHTML = `You are signed in as <b>${details.email}</b><br><br>
+                            <button class="btn btn-sm btn-primary" id="signOut">Signout</button>`;
+                        }
+                    }
+                );
+            }
+        });
+
+
+
 
 
 
@@ -505,7 +528,7 @@ function setProcessGroupTable(storeObject) {
     resultString += `<th style="cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">Stopped</th>`;
     resultString += `<th style="cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">Invalid</th>`;
     resultString += `<th style="cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">Disabled</th>`;
-    resultString += `<th style="cursor: pointer;" id="threads_head">Threads</th>`;
+    resultString += `<th style="cursor: pointer;" id="threads_head">Active<br>Threads</th>`;
     resultString += `<th style="cursor: pointer;" id="queued_head">Queued<br>Count</th>`;
     resultString += `<th style="">Queued<br>Data</th></tr>`;
 
@@ -907,6 +930,8 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 
 /************************************************************************************************************/
 
+// feature development in progress...
+
 // getActiveTab().then((tabParams) => {
 //     var tabId = tabParams[`tabId`]
 //     var url = tabParams[`url`]
@@ -979,9 +1004,14 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 /************************************************************************************************************/
 
 function updateEnvironmentCountsList() {
+    /*
+       Updated the context menu with environments and number of flows cached in each environment
+    */
     getCachedItem(`omniDataStore`).then((omniDataStore) => {
+        // Initialize the environment counts list
         var environmentCountsDataStore = {};
         if (omniDataStore) {
+            // When there are search items in the data store
             Object.keys(omniDataStore).forEach((key) => {
                 let hostname = key.split(`,`)[1];
                 if (Object.keys(environmentCountsDataStore).includes(hostname)) {
@@ -991,6 +1021,7 @@ function updateEnvironmentCountsList() {
                     environmentCountsDataStore[hostname] = 1;
                 }
             });
+            // Save the environment counts list
             setCachedItem(`environmentCountsDataStore`, environmentCountsDataStore);
             sendMessageToBackground(message = { actionName: "loadEnvironmentsContextMenu" }).then((messageResponse) => {
                 if (messageResponse) {
@@ -1012,22 +1043,6 @@ function updateEnvironmentCountsList() {
 
 /************************************************************************************************************/
 
-getCachedItem(`loggedIn`).
-    then((loggedIn) => {
-        if (loggedIn == "true") {
-            document.getElementById(`signIn`).style.display = `none`;
-            chrome.identity.getProfileUserInfo(
-                { accountStatus: 'ANY' },
-                (details) => {
-                    console.log(details);
-                    if (details.id != "" && details.email != "") {
-                        document.getElementById(`accountDetails`).innerHTML = `You are signed in as <b>${details.email}</b><br><br>
-                        <button class="btn btn-sm btn-primary" id="signOut">Signout</button>`;
-                    }
-                }
-            );
-        }
-    });
 
 document.getElementById(`signIn`).addEventListener(`click`, (event) => {
     chrome.tabs.create({
@@ -1043,3 +1058,5 @@ document.addEventListener(`click`, (event) => {
         chrome.identity.clearAllCachedAuthTokens();
     }
 });
+
+/************************************************************************************************************/

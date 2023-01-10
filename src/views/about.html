@@ -16,28 +16,14 @@
             <div class="container-fluid py-5">
                 <img src="../../assets/extension_icons/icon_128.png" class="img-fluid">
                 <h1 class="display-5 fw-bold">Nifi Utils</h1>
-                <p class="col fs-4">This extension eases the process of maintaining huge production nifi instances with
-                    numerous flows.</p>
+                <p class="col fs-4">Manage your production Nifi instances like a pro.</p>
                 <br>
                 <a href="https://github.com/karthikchiru12/Nifi-Utils-Chrome-Extension"><img
                         src="../../assets/misc_icons/github.svg" class="img-fluid"></img></a>
                 <br><br>
                 <div class="alert" role="alert" id="description_message">
                     <h4 class="alert-heading" id="status">Successfully Installed...!</h4>
-                    <p>This extension <u>only works on Nifi instances that are deployed / productionized</u>. When
-                        installed, it identifies when a logged-in Nifi instance is opened in the currently active tab in
-                        the browser. Then it inserts a <u>content script</u>, which retrieves the <b>JWT</b> (JSON Web
-                        Token) token and hostname from the currently active tab to the extension. Then using that token
-                        and
-                        the instance`s hostname, one can retrieve a list of all the process groups present on the
-                        screen, bookmark any process group by adding them to the queue, and search for any process
-                        group.
-                        All the results by any of the features provided are cached to be viewed later. The operation of
-                        getting the hostname and JWT token should be performed, whenever the user wants to fetch or
-                        search for new data or update existing data. Once any process group is fetched/searched from any
-                        instance, it
-                        will be available to be searched from the chrome search itself indefinitely until the extension
-                        is uninstalled.</p>
+                    <p><u>This extension only works on Nifi instances that are deployed / productionized.</u><br><br>When a logged-in Nifi instance is opened in the currently active tab, the extension injects a content script in that tab, which retrieves the JWT (JSON Web Token) token and hostname of the Nifi instance from the currently active tab to the extension. Then using that token and the instance`s hostname, the extension can retrieve all the process groups present on the Nifi canvas. And they are also cached to view later. Then you can search & sort the fetched process groups based on various filters. You can also bookmark any process group by adding it to the queue. And export the queue as a CSV file. Apart from fetching only what is available on the canvas, you can also search for process groups in the whole Nifi instance. And these search results are also cached to be viewed later. Once any process group is fetched from canvas/searched for, it will available to be directly searched from chrome`s search bar.  Anyone working on Nifi 1.13.2 or less can leverage various custom UI components which are directly injected into the Nifi UI. They can help you in enabling/disabling all the controller services at a certain process group level, copy the JWT token using a single click, and back up any of the process groups to your google drive. You can enable any of these custom UI components using the options menu.</p>
                     <hr>
                     <p class="mb-0">Anger is a statement, well like a statement after <code>return;</code> statement. It
                         is of no use. But on the other hand, constructive criticism is definitely of some use. So, if
@@ -152,7 +138,7 @@
                         <div class="card-body">
 
                             <p class="card-text">Unlike fetch process groups, which just fetches the process groups
-                                present on the screen, This feature searches for the given keyword in whole of the
+                                present on the Nifi canvas, This feature searches for the given keyword in whole of the
                                 current Nifi instance.</p>
                             <img src="../../assets/screenshots/4.png" class="img-fluid img-thumbnail bg-dark" ,
                                 style="border :0;">
@@ -206,6 +192,32 @@
                             <img src="../../assets/screenshots/5.png" class="img-fluid img-thumbnail bg-dark" ,
                                 style="border :0;">
                         </div>
+                    </div>
+                </div>
+            </div>
+            <br><br><br><br>
+            <div class="row gx-4">
+                <div class="col">
+                    <div class="card text-bg-dark">
+                        <h5 class="card-header">Custom UI Components</h5>
+                        <div class="card-body">
+
+                            <p class="card-text">Add custom UI components to the Nifi UI.</p>
+                            <img src="../../assets/screenshots/6.png" class="img-fluid img-thumbnail bg-dark" ,
+                                style="border :0;">
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-auto">
+                    <div>
+                        <ul>
+                            <li>You can copy the current process group level`s url directly to clipboard.</li><br>
+                            <li>You can enable or disable controller services at a non-root level.</li><br>
+                            <li>If you are logged into the extension using your google account, you can also backup any process group`s template onto your google drive.
+                            </li><br>
+                        </ul>
+
+
                     </div>
                 </div>
             </div>

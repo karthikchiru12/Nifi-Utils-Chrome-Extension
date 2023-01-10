@@ -2,7 +2,8 @@
 
 chrome.storage.local.get(["optionsDataStore"], (item) => {
     var optionsDataStore = item["optionsDataStore"];
-    if (optionsDataStore != null && optionsDataStore != undefined) { // Updates the UI with current options
+    if (optionsDataStore != null && optionsDataStore != undefined) { 
+        // Updates the UI with current options
         Object.keys(optionsDataStore).forEach((element) => {
             if (optionsDataStore[element] == "enabled") {
                 document.getElementsByName(element)[0].checked = "true";
@@ -13,7 +14,8 @@ chrome.storage.local.get(["optionsDataStore"], (item) => {
         });
     }
     else {
-        var optionsObj = {}; // Initialize when first installed.
+        // Initialize the options when extension is installed. (All are disabled by default)
+        var optionsObj = {}; 
         optionsObj["copy_jwt_token_component"] = "disabled";
         optionsObj["copy_link_component"] = "disabled";
         optionsObj["enable_all_controller_services_component"] = "disabled";
