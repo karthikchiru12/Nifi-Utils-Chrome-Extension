@@ -6,13 +6,13 @@ try {
     chrome.runtime.onInstalled.addListener(function (event) {
         if (event.reason == `install`) {
             chrome.tabs.create({
-                url: `src/views/about.html?status=installed`
+                url: `https://chiranjeevikarthik.me/Nifi-Utils/?status=installed`
             });
         }
         if (event.reason == `update`) {
             const version = chrome.runtime.getManifest()[`version`];
             chrome.tabs.create({
-                url: `src/views/about.html?status=updated&version=${version}`
+                url: `https://chiranjeevikarthik.me/Nifi-Utils/?status=updated&version=${version}`
             });
         }
     });

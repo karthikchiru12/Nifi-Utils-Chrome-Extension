@@ -167,6 +167,7 @@ try {
                                     "Content-Type": "application/json"
                                 }
                             }
+                            // Even Im not proud of this messy nested fetch block, Need to work on my promises knowledge
                             fetchWrapper(`https://${hostname}/nifi-api/process-groups/${id}`, getProcessGroupDetailsRequest,
                                 "json", "processGroupDetails")
                                 .then((processGroupData) => {
@@ -289,7 +290,7 @@ try {
                                                                                     });
                                                                             }
                                                                             else {
-                                                                                document.getElementById(`custom_upload_to_drive`).innerText = `Upload failed!`;
+                                                                                document.getElementById(`custom_upload_to_drive`).innerText = `Upload_failed!`;
                                                                                 alert(`Please sign in again!...`);
                                                                             }
 
@@ -302,7 +303,7 @@ try {
                                                                         console.log("Saved!");
                                                                     });
                                                                     alert(`Please sign in again!...`);
-                                                                    document.getElementById(`custom_upload_to_drive`).innerText = `Upload failed!`;
+                                                                    document.getElementById(`custom_upload_to_drive`).innerText = `Upload_failed!`;
                                                                 }
                                                             });
 
