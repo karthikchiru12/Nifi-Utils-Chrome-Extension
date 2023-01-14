@@ -246,7 +246,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     (details) => {
                         console.log(details);
                         if (details.id != "" && details.email != "") {
-                            document.getElementById(`accountDetails`).innerHTML = `You are signed in as <b>${details.email}</b><br><br>
+                            document.getElementById(`accountDetails`).innerHTML = `You are signed in as <b style="color:aqua;">${details.email}</b><br><br>
                             <button class="btn btn-sm btn-primary" id="signOut">Signout</button>`;
                         }
                     }

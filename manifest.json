@@ -36,7 +36,7 @@
     "oauth2": {
         "client_id": "<your client id>",
         "scopes": [
-            "scopes"
+            "scope"
         ]
     },
     "options_page": "src/views/options.html",
