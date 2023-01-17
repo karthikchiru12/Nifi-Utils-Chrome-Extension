@@ -11,6 +11,19 @@ try {
         }
         if (event.reason == `update`) {
             const version = chrome.runtime.getManifest()[`version`];
+
+            // Disabling all the custom UI components on extension update
+
+            var optionsObj = {};
+            optionsObj["copy_jwt_token_component"] = "disabled";
+            optionsObj["copy_link_component"] = "disabled";
+            optionsObj["enable_all_controller_services_component"] = "disabled";
+            optionsObj["disable_all_controller_services_component"] = "disabled";
+            optionsObj["upload_to_drive_component"] = "disabled";
+            optionsObj["service_info_component"] = "disabled";
+            chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
+                console.log("Saved!");
+            });
             chrome.tabs.create({
                 url: `https://chiranjeevikarthik.me/Nifi-Utils/?status=updated&version=${version}`
             });

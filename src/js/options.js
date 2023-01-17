@@ -21,6 +21,7 @@ chrome.storage.local.get(["optionsDataStore"], (item) => {
         optionsObj["enable_all_controller_services_component"] = "disabled";
         optionsObj["disable_all_controller_services_component"] = "disabled";
         optionsObj["upload_to_drive_component"] = "disabled";
+        optionsObj["service_info_component"] = "disabled";
         chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
             console.log("Saved!");
         });

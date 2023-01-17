@@ -48,6 +48,86 @@ async function fetchWrapper(url, request, responseType, context) {
 }
 
 /************************************************************************************************************/
+// EXPERIMENTAL feature
+function addServiceInfoDetails() {
+    try {
+        // node to observe for changes
+        const targetNode = document.getElementById('canvas-body');
+
+        // observer config
+        const config = { childList: true, subtree: true };
+
+        // callback when there are changes to observed nodes
+        const serviceInfoCallback = (mutationList, observer) => {
+            for (const mutation of mutationList) {
+                if (mutation.type === 'childList') {
+                    if (mutation.previousSibling) {
+                        if (mutation.previousSibling.className == `combo-editor ui-draggable ui-draggable-handle`) {
+                            if (mutation.addedNodes.length != 0) {
+                                Array.from(document.querySelector("#canvas-body > div.combo-options > ul").getElementsByTagName("li")).forEach((element) => {
+                                    var controllerServiceId = element.getElementsByClassName('hidden')[0].textContent;
+                                    if (controllerServiceId != null && controllerServiceId != undefined & controllerServiceId != "") {
+                                        element.getElementsByClassName('combo-option-text')[0].insertAdjacentHTML(`afterbegin`, `<div class="fa fa-question-circle" alt="Info" id="${controllerServiceId}" title="controllerServicesInfo"></div>&nbsp;&nbsp;&nbsp;&nbsp;`);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } else if (mutation.type === 'attributes') {
+                    console.log(`The ${mutation.attributeName} attribute was modified.`);
+                }
+            }
+        };
+
+        // create an observer
+        const observer = new MutationObserver(serviceInfoCallback);
+
+        //observe the target node for changes
+        observer.observe(targetNode, config);
+
+        document.addEventListener('mouseover', (event) => {
+            if (event.target.title == 'controllerServicesInfo') {
+                var token = JSON.parse(localStorage.getItem("jwt"))["item"];
+                var url = window.location.href;
+                var hostname = new URL(url).hostname.toString();
+                var id = event.target.id;
+                document.getElementById(id).title = 'loading...!';
+
+                var getServiceInfoRequest = {
+                    "method": "GET",
+                    "headers":
+                    {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                };
+
+                fetchWrapper(`https://${hostname}/nifi-api/controller-services/${id}`, getServiceInfoRequest,
+                    `json`, `getServiceInfo`).then((data) => {
+                        if (data) {
+                            var resultObject = {};
+
+                            resultObject[`status`] = data[`status`];
+                            resultObject[`properties`] = data[`component`][`properties`];
+                            document.getElementById(id).title = JSON.stringify(resultObject);
+                        }
+                        else {
+                            console.log(`Data for given controller service with ${id} not found.`);
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+/************************************************************************************************************/
 
 try {
     var html_to_inject = ``;
@@ -83,11 +163,14 @@ try {
                 <div class="clear"></div>`;
             }
             if (optionsDataStore[`upload_to_drive_component`] == `enabled`) {
-                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3;">
+                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
                 &nbsp;&nbsp;<i class="fa fa-upload" style="color:black;"></i>
                 <button id="custom_upload_to_drive" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Backups the selected flow's template to google drive">Upload&nbsp;to&nbsp;Google&nbsp;Drive</button>
                 </div>
                 <div class="clear"></div>`;
+            }
+            if (optionsDataStore[`service_info_component`] == `enabled`) {
+                addServiceInfoDetails();
             }
         }
     });
