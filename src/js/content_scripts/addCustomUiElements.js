@@ -87,6 +87,7 @@ function addServiceInfoDetails() {
 
         document.addEventListener('mouseover', (event) => {
             if (event.target.title == 'controllerServicesInfo') {
+                var resultObject = {};
                 var token = JSON.parse(localStorage.getItem("jwt"))["item"];
                 var url = window.location.href;
                 var hostname = new URL(url).hostname.toString();
@@ -103,15 +104,40 @@ function addServiceInfoDetails() {
                 };
 
                 fetchWrapper(`https://${hostname}/nifi-api/controller-services/${id}`, getServiceInfoRequest,
-                    `json`, `getServiceInfo`).then((data) => {
-                        if (data) {
-                            var resultObject = {};
+                    `json`, `getServiceInfo`).then((controllerServiceData) => {
+                        if (controllerServiceData) {
 
-                            resultObject[`status`] = data[`status`];
-                            resultObject[`properties`] = data[`component`][`properties`];
-                            document.getElementById(id).title = JSON.stringify(resultObject);
+                            resultObject[`status`] = controllerServiceData[`status`];
+                            resultObject[`properties`] = controllerServiceData[`component`][`properties`];
+
+                            var parentGroupId = controllerServiceData[`parentGroupId`];
+
+                            var getProcessGroupDetailsRequest =
+                            {
+                                "method": "GET",
+                                "headers":
+                                {
+                                    "Authorization": `Bearer ${token}`,
+                                    "Content-Type": "application/json"
+                                }
+                            };
+
+                            fetchWrapper(`https://${hostname}/nifi-api/process-groups/${parentGroupId}`, getProcessGroupDetailsRequest,
+                                `json`, `getProcessGroupName`).then((processGroupData) => {
+                                    if (processGroupData) {
+                                        var scopeProcessGroupName = processGroupData[`component`][`name`];
+
+                                        resultObject[`scope`] = scopeProcessGroupName;
+
+                                        document.getElementById(id).title = JSON.stringify(resultObject);
+                                    }
+                                    else {
+                                        document.getElementById(id).title = `Either not a controller service or the controller service is not found.`;
+                                    }
+                                });
                         }
                         else {
+                            document.getElementById(id).title = `Either not a controller service or the controller service is not found.`;
                             console.log(`Data for given controller service with ${id} not found.`);
                         }
 

@@ -106,7 +106,7 @@ async function getActiveTab() {
 
 }
 
-async function sendMessageToContext(tabId, message) {
+async function sendMessageToContent(tabId, message) {
     /*
        Sends a message to any content script functions.
        And then returns the response returned by the content script function.
@@ -368,7 +368,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
         console.log(tabId, url, hostname);
         if (tabId) { // When active tab properties are successfully fetched
             var messageRequest = { actionName: `getJwtToken` };
-            sendMessageToContext(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
+            sendMessageToContent(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
                 if (messageResponse) {
                     if (messageResponse.actionName == `jwtToken`) {
                         // Set the loading spinner while the below statements are executed.
@@ -770,7 +770,7 @@ document.getElementById(`getSearchResults`).addEventListener(`click`, () => {
         console.log(tabId, url, hostname);
         if (tabId) {
             var messageRequest = { actionName: `getJwtToken` };
-            sendMessageToContext(tabId, messageRequest).then((messageResponse) => {
+            sendMessageToContent(tabId, messageRequest).then((messageResponse) => {
                 if (messageResponse) {
                     if (messageResponse.actionName == `jwtToken`) {
                         document.getElementById(`searchResult`).innerHTML = `<br><div class="spinner-border text-light" role="status">
@@ -930,75 +930,80 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 
 /************************************************************************************************************/
 
-// feature development in progress...
-
-// getActiveTab().then((tabParams) => {
-//     var tabId = tabParams[`tabId`]
-//     var url = tabParams[`url`]
-//     var hostname = tabParams[`hostname`];
-//     console.log(tabId, url, hostname);
-//     if (tabId) { // When active tab properties are successfully fetched
-//         var messageRequest = { actionName: `getJwtToken` };
-//         sendMessage(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
-//             if (messageResponse) {
-//                 if (messageResponse.actionName == `jwtToken`) {
-//                     // Set the loading spinner while the below statements are executed.
-//                     // document.getElementById(`processGroupsResult`).innerHTML = `<br><div class="spinner-border text-light" role="status">
-//                     //             <span class="visually-hidden">Loading...</span>
-//                     //             </div>`;
-//                     var token = JSON.parse(messageResponse.data)[`item`]; // jwt token
-//                     var parentPgId = new URL(url).searchParams.get(`processGroupId`);
-//                     if (parentPgId == null || parentPgId == undefined || parentPgId == ``) { // if process group id is not present in url
-//                         parentPgId = `root`; // Assume process group id as `root`
+// document.getElementById(`getControllerServices`).addEventListener(`click`, () => {
+//     /*
+//        Controller services
+//     */
+//        getActiveTab().then((tabParams) => {
+//         var tabId = tabParams[`tabId`]
+//         var url = tabParams[`url`]
+//         var hostname = tabParams[`hostname`];
+//         console.log(tabId, url, hostname);
+//         if (tabId) { // When active tab properties are successfully fetched
+//             var messageRequest = { actionName: `getJwtToken` };
+//             sendMessageToContent(tabId, messageRequest).then((messageResponse) => { // Send a message to content script to fetch jwt token.
+//                 if (messageResponse) {
+//                     if (messageResponse.actionName == `jwtToken`) {
+//                         // Set the loading spinner while the below statements are executed.
+//                         // document.getElementById(`processGroupsResult`).innerHTML = `<br><div class="spinner-border text-light" role="status">
+//                         //             <span class="visually-hidden">Loading...</span>
+//                         //             </div>`;
+//                         var token = JSON.parse(messageResponse.data)[`item`]; // jwt token
+//                         console.log(token);
+//                         var parentPgId = new URL(url).searchParams.get(`processGroupId`);
+//                         if (parentPgId == null || parentPgId == undefined || parentPgId == ``) { // if process group id is not present in url
+//                             parentPgId = `root`; // Assume process group id as `root`
+//                         }
+//                         var request = {
+//                             "method": "GET",
+//                             "headers":
+//                                 { "Authorization": `Bearer ${token}` }
+//                         };
+//                         fetchData(`https://${hostname}/nifi-api/flow/process-groups/${parentPgId}/controller-services?includeAncestorGroups=false&includeDescendantGroups=true`,
+//                             request, `controllerServices`).then((data) => {
+//                                 if(data)
+//                                 {
+//                                     var controllerServicesDataStore = {};
+//                                     console.log(data);
+//                                     controllerServicesDataStore[`pgIdFetchedFrom`] = parentPgId;
+//                                     controllerServicesDataStore[`fetchedTime`] = data[`currentTime`];
+//                                     controllerServicesDataStore[`data`] = [];
+//                                     data[`controllerServices`].forEach((record) => {
+//                                             var tempRecord = {};
+//                                             tempRecord[`id`] = record[`id`];
+//                                             tempRecord[`revision`] = record[`revision`];
+//                                             tempRecord[`parentPgId`] = record[`parentGroupId`];
+//                                             tempRecord[`properties`] = record[`properties`];
+//                                             tempRecord[`name`] = record[`name`];
+    
+//                                             var tempComponent = record[`component`];
+//                                             tempRecord[`properties`] = tempComponent[`properties`];
+//                                             tempRecord[`bundle`] = tempComponent[`bundle`];
+//                                             tempRecord[`validationStatus`] = tempComponent[`validationStatus`];
+//                                             tempRecord[`state`] = tempComponent[`state`];
+    
+//                                             controllerServicesDataStore[`data`].push(tempRecord); 
+//                                     });
+    
+//                                     console.log(controllerServicesDataStore);
+//                                 }
+//                             }).catch((error) => {
+//                                 console.log(error);
+//                             });
+    
 //                     }
-//                     var request = {
-//                         "method": "GET",
-//                         "headers":
-//                             { "Authorization": `Bearer ${token}` }
-//                     };
-//                     fetchData(`https://${hostname}/nifi-api/flow/process-groups/${parentPgId}/controller-services?includeAncestorGroups=false&includeDescendantGroups=true`,
-//                         request, `controllerServices`).then((data) => {
-//                             if(data)
-//                             {
-//                                 var controllerServicesDataStore = {};
-//                                 console.log(data);
-//                                 controllerServicesDataStore[`pgIdFetchedFrom`] = parentPgId;
-//                                 controllerServicesDataStore[`fetchedTime`] = data[`currentTime`];
-//                                 controllerServicesDataStore[`data`] = [];
-//                                 data[`controllerServices`].forEach((record) => {
-//                                         var tempRecord = {};
-//                                         tempRecord[`id`] = record[`id`];
-//                                         tempRecord[`revision`] = record[`revision`];
-//                                         tempRecord[`parentPgId`] = record[`parentGroupId`];
-//                                         tempRecord[`properties`] = record[`properties`];
-//                                         tempRecord[`name`] = record[`name`];
-
-//                                         var tempComponent = record[`component`];
-//                                         tempRecord[`properties`] = tempComponent[`properties`];
-//                                         tempRecord[`bundle`] = tempComponent[`bundle`];
-//                                         tempRecord[`validationStatus`] = tempComponent[`validationStatus`];
-//                                         tempRecord[`state`] = tempComponent[`state`];
-
-//                                         controllerServicesDataStore[`data`].push(tempRecord); 
-//                                 });
-
-//                                 console.log(controllerServicesDataStore);
-//                             }
-//                         }).catch((error) => {
-//                             console.log(error);
-//                         });
-
 //                 }
-//             }
-//         }).catch((error) => {
-//             console.log(error);
-//             alert(`Reload nifi page and then try again!...`);
-//         });
+//             }).catch((error) => {
+//                 console.log(error);
+//                 alert(`Reload nifi page and then try again!...`);
+//             });
+    
+//         }
+//     }).catch((error) => {
+//         console.log(error);
+//         alert(`Reload nifi page and then try again!...`);
+//     });
 
-//     }
-// }).catch((error) => {
-//     console.log(error);
-//     alert(`Reload nifi page and then try again!...`);
 // });
 
 /************************************************************************************************************/
