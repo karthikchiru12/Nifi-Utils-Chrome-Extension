@@ -1,3 +1,5 @@
+var arecustomUIComponentsAddedToUI = false;
+
 async function fetchWrapper(url, request, responseType, context) {
     /*
        Using fetch() sends the provided request and returns the corresponding response.
@@ -205,9 +207,19 @@ try {
     document.body.addEventListener(`auxclick`, (event) => {
 
         var element = document.querySelector(`#variable-registry-menu-item`);
-        if (element != undefined && element != null) {
+        if (element != undefined && element != null && arecustomUIComponentsAddedToUI == false) {
+            arecustomUIComponentsAddedToUI = true;
             document.querySelector(`#variable-registry-menu-item`).insertAdjacentHTML(`beforebegin`, html_to_inject);
         }
+    });
+
+    // Renable the custom UI components after a left or right click
+    document.body.addEventListener('click',(event)=> {
+        arecustomUIComponentsAddedToUI = false;
+    });
+
+    document.body.addEventListener('contextmenu',(event)=> {
+        arecustomUIComponentsAddedToUI = false;
     });
 
     document.addEventListener(`click`, (event) => {

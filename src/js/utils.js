@@ -709,9 +709,11 @@ document.getElementById(`copyQueue`).addEventListener(`click`, () => {
     */
     getCachedItem(`queueDataStore`).then((queueDataStore) => {
         if (queueDataStore) {
-            var queueData = `id,instance,pgName \n`;
+            var queueData = `id,instance,pgName,url \n`;
             Object.keys(queueDataStore).forEach((element) => {
-                queueData += `${element.split(`,`)[0]}, ${element.split(`,`)[1]}, ${queueDataStore[element].toString().replaceAll(`,`, ` `)} \n`;
+                let pgId = element.split(`,`)[0];
+                let hostName = element.split(`,`)[1]
+                queueData += `${pgId}, ${hostName}, ${queueDataStore[element].toString().replaceAll(`,`, ` `)},https://${hostName}/nifi/?processGroupId=${pgId} \n`;
             });
             navigator.clipboard.writeText(queueData);
         }
@@ -909,10 +911,10 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
     getCachedItem(`searchDataStore`).then((searchDataStore) => {
         if (searchDataStore) {
             var resultString = ``;
-            resultString += `parent_pg_id, parent_pg_name, pg_id, pg_name\n`;
+            resultString += `hostname,parent_pg_id, parent_pg_name, pg_id, pg_name\n`;
             Object.keys(searchDataStore).forEach((element) => {
                 if (element != `hostname` && element != `searchKeyword`) {
-                    resultString += `${element},${searchDataStore[element][`name`].toString().replaceAll(`,`, ` `)},`;
+                    resultString += `${searchDataStore[`hostname`]},${element},${searchDataStore[element][`name`].toString().replaceAll(`,`, ` `)},`;
                     searchDataStore[element][`children`].forEach((flow, idx) => {
                         if (idx == 0) {
                             resultString += `${flow[0]},${flow[1].toString().replaceAll(`,`, ` `)}\n`;
@@ -959,7 +961,7 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 //                             "headers":
 //                                 { "Authorization": `Bearer ${token}` }
 //                         };
-//                         fetchData(`https://${hostname}/nifi-api/flow/process-groups/${parentPgId}/controller-services?includeAncestorGroups=false&includeDescendantGroups=true`,
+//                         fetchData(`https://${hostname}/nifi-api/flow/process-groups/${parentPgId}/controller-services?includeAncestorGroups=false&includeDescendantGroups=false`,
 //                             request, `controllerServices`).then((data) => {
 //                                 if(data)
 //                                 {
