@@ -261,8 +261,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     getActiveTab().then((tabParams) => {
         if (tabParams) {
-            var tabId = tabParams[`tabId`]
-            var url = tabParams[`url`]
+            var tabId = tabParams[`tabId`];
+            var url = tabParams[`url`];
             var hostname = tabParams[`hostname`];
             if (tabId) {
                 if (hostname != null && hostname != undefined && url.includes(`/nifi/`)) { // check if current active tab is a nifi instance
@@ -356,14 +356,14 @@ document.getElementById(`goToGlobalSearch`).addEventListener(`click`, () => {
 /************************************************************************************************************/
 
 
-document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
+document.getElementById(`getProcessGroups`).addEventListener(`click`, (event) => {
     /*
        Fetch process groups
     */
-
+   
     getActiveTab().then((tabParams) => {
-        var tabId = tabParams[`tabId`]
-        var url = tabParams[`url`]
+        var tabId = tabParams[`tabId`];
+        var url = tabParams[`url`];
         var hostname = tabParams[`hostname`];
         console.log(tabId, url, hostname);
         if (tabId) { // When active tab properties are successfully fetched
@@ -380,6 +380,9 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                         if (parentPgId == null || parentPgId == undefined || parentPgId == ``) { // if process group id is not present in url
                             parentPgId = `root`; // Assume process group id as `root`
                         }
+                        if (Object.keys(event).includes("continuousFetch") && event["continuousFetch"] == true) {
+                            parentPgId = event["idToFetch"];
+                        }
                         var request = {
                             "method": "GET",
                             "headers":
@@ -392,10 +395,18 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, () => {
                                     var parentPgId = data[`processGroupFlow`][`breadcrumb`][`breadcrumb`][`id`];
                                     var parentPgName = data[`processGroupFlow`][`breadcrumb`][`breadcrumb`][`name`];
                                     var processGroupsList = data[`processGroupFlow`][`flow`][`processGroups`];
+                                    var parentGroupPgId;
+                                    if (Object.keys(data[`processGroupFlow`]).includes(`parentGroupId`)) {
+                                        parentGroupPgId = data[`processGroupFlow`][`parentGroupId`];
+                                    }
+                                    else {
+                                        parentGroupPgId = parentPgId;
+                                    }
 
                                     pgDataStore[`parentPgId`] = parentPgId;
                                     pgDataStore[`parentPgName`] = parentPgName;
                                     pgDataStore[`instanceFetchedFrom`] = hostname;
+                                    pgDataStore[`parentGroupId`] = parentGroupPgId;
                                     pgDataStore[`fetchedTime`] = new Date().toString();
                                     pgDataStore[`data`] = [];
 
@@ -517,53 +528,81 @@ function setProcessGroupTable(storeObject) {
     /*
        Updating process groups table
     */
-    var resultString = "";
-    resultString += `<p style="color:#4CAAB8;"><b style="color:aqua;font-size:16px;">${storeObject["instanceFetchedFrom"]}&nbsp;|&nbsp;<span><a style="text-decoration:none;color:tomato;" href="https://${storeObject["instanceFetchedFrom"]}/nifi/?processGroupId=${storeObject["parentPgId"]}" target="_blank">${storeObject["parentPgName"]}</a></span></b><br>${storeObject["fetchedTime"]}</p>`;
-    resultString += `<br><input class="form-control form-control-sm w-auto" type="text" id="processGroupsResultSearch" placeholder="Search process group name"><br><br>`;
-    resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover table-striped" id="processGroupsResultTable">`;
-    resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
-    resultString += `<th>No</th>`;
-    resultString += `<th>Process Group</th>`;
-    resultString += `<th style="cursor: pointer;" id="running_head"><img src="../../assets/misc_icons/running.svg">Running</th>`;
-    resultString += `<th style="cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">Stopped</th>`;
-    resultString += `<th style="cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">Invalid</th>`;
-    resultString += `<th style="cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">Disabled</th>`;
-    resultString += `<th style="cursor: pointer;" id="threads_head">Active<br>Threads</th>`;
-    resultString += `<th style="cursor: pointer;" id="queued_head">Queued<br>Count</th>`;
-    resultString += `<th style="">Queued<br>Data</th></tr>`;
 
-    let rowIndex = 1;
-    resultString += `<tbody class="table-group-divider">`;
-    storeObject[`data`].forEach((element) => {
-        resultString += `<tr>`;
-        resultString += `<td><button id="add-to-queue" class="btn btn-sm btn-primary" style="margin:10px;">+</button></td>`;
-        resultString += `<td>${rowIndex}</td>`;
-        resultString += `<td><div title="${element["pgId"]}" id="process_group_name">
+    var continuousFetchAndBackEnabled = false;
+    getActiveTab().then((tabParams) => {
+        if (tabParams) {
+            var tabId = tabParams[`tabId`];
+            var url = tabParams[`url`];
+            var hostname = tabParams[`hostname`];
+            if (tabId) {
+                if (storeObject["instanceFetchedFrom"] === hostname) {
+                    continuousFetchAndBackEnabled = true;
+                }
+            }
+            var resultString = "";
+            resultString += `<p style="color:#4CAAB8;"><b style="color:aqua;font-size:16px;">${storeObject["instanceFetchedFrom"]}&nbsp;|&nbsp;<span><a style="text-decoration:none;color:tomato;" href="https://${storeObject["instanceFetchedFrom"]}/nifi/?processGroupId=${storeObject["parentPgId"]}" target="_blank">${storeObject["parentPgName"]}</a></span></b><br>${storeObject["fetchedTime"]}</p>`;
+            resultString += `<br><input class="form-control form-control-sm w-auto" type="text" id="processGroupsResultSearch" placeholder="Search process group name"><br><br>`;
+            resultString += `<table class="table table-sm table-responsive table-bordered table-dark table-hover table-striped" id="processGroupsResultTable">`;
+            resultString += `<tr class="table-info"><th>&nbsp;&nbsp;&nbsp;</th>`;
+            resultString += `<th>No</th>`;
+            resultString += `<th>Process Group</th>`;
+            resultString += `<th style="cursor: pointer;" id="running_head"><img src="../../assets/misc_icons/running.svg">Running</th>`;
+            resultString += `<th style="cursor: pointer;" id="stopped_head"><img src="../../assets/misc_icons/stopped.svg">Stopped</th>`;
+            resultString += `<th style="cursor: pointer;" id="invalid_head"><img src="../../assets/misc_icons/invalid.svg">Invalid</th>`;
+            resultString += `<th style="cursor: pointer;" id="disabled_head"><img src="../../assets/misc_icons/disabled.svg">Disabled</th>`;
+            resultString += `<th style="cursor: pointer;" id="threads_head">Active<br>Threads</th>`;
+            resultString += `<th style="cursor: pointer;" id="queued_head">Queued<br>Count</th>`;
+            resultString += `<th style="">Queued<br>Data</th></tr>`;
+
+            let rowIndex = 1;
+            resultString += `<tbody class="table-group-divider">`;
+            storeObject[`data`].forEach((element) => {
+                resultString += `<tr>`;
+                resultString += `<td><button id="add-to-queue" class="btn btn-sm btn-primary" style="margin:10px;">+</button></td>`;
+                resultString += `<td>${rowIndex}</td>`;
+                resultString += `<td><div title="${element["pgId"]}" id="process_group_name">
             <div style="max-width: 25ch;overflow-wrap: break-word;">${element["pgName"]}</div><br><br>
             <span>Link :</span>
             <a style="text-decoration:none; color:tomato;" title="${storeObject["instanceFetchedFrom"]}" href="https://${storeObject["instanceFetchedFrom"]}/nifi/?processGroupId=${element["pgId"]}" target="_blank">Open</a><br><br>`;
-        if (Object.keys(element["variables"]).length > 0) {
-            resultString += `<a style="text-decoration:none; color:#189AB4;" data-bs-toggle="collapse" href="#var-${element["pgId"]}" aria-expanded="false" aria-controls="var-${element["pgId"]}">
+                if (continuousFetchAndBackEnabled) {
+                    if (storeObject["parentGroupId"] === storeObject["parentPgId"]) {
+                        resultString += `<span style="cursor: pointer;text-decoration:none; color:aqua;" id="${element["pgId"]}" title="continuousFetch">Fetch</span><br><br>`;
+                    }
+                    else {
+                        resultString += `<span style="cursor: pointer;text-decoration:none; color:aqua;" id="${element["pgId"]}" title="continuousFetch">Fetch</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="cursor: pointer;text-decoration:none; color:aqua;" id="${storeObject["parentGroupId"]}" title="continuousFetch">Back</span><br><br>`;
+                    }
+                }
+                if (Object.keys(element["variables"]).length > 0) {
+                    resultString += `<a style="text-decoration:none; color:#189AB4;" data-bs-toggle="collapse" href="#var-${element["pgId"]}" aria-expanded="false" aria-controls="var-${element["pgId"]}">
             Variables ></a><br><br>`;
-            resultString += `<div class="collapse" id="var-${element["pgId"]}">`;
-            Object.keys(element["variables"]).forEach((variable) => {
-                resultString += `<span style="color:wheat;">${variable}</span> : <pre>${element["variables"][variable].toString().replaceAll(`<`, `&lt;`).replaceAll(`>`, `&gt;`)}</pre><br>`;
+                    resultString += `<div class="collapse" id="var-${element["pgId"]}">`;
+                    Object.keys(element["variables"]).forEach((variable) => {
+                        resultString += `<span style="color:wheat;">${variable}</span> : <pre>${element["variables"][variable].toString().replaceAll(`<`, `&lt;`).replaceAll(`>`, `&gt;`)}</pre><br>`;
+                    });
+                    resultString += `</div>`;
+                }
+                resultString += `</div></td>`;
+                resultString += `<td>${element["running"]}</td>`;
+                resultString += `<td>${element["stopped"]}</td>`;
+                resultString += `<td>${element["invalid"]}</td>`;
+                resultString += `<td>${element["disabled"]}</td>`;
+                resultString += `<td>${element["threads"]}</td>`;
+                resultString += `<td>${element["queued"]}</td>`;
+                resultString += `<td>${element["queuedData"]}</td></tr>`;
+                rowIndex += 1;
             });
-            resultString += `</div>`;
-        }
-        resultString += `</div></td>`;
-        resultString += `<td>${element["running"]}</td>`;
-        resultString += `<td>${element["stopped"]}</td>`;
-        resultString += `<td>${element["invalid"]}</td>`;
-        resultString += `<td>${element["disabled"]}</td>`;
-        resultString += `<td>${element["threads"]}</td>`;
-        resultString += `<td>${element["queued"]}</td>`;
-        resultString += `<td>${element["queuedData"]}</td></tr>`;
-        rowIndex += 1;
-    });
-    resultString += `</tbody></table>`;
+            if(storeObject[`data`].length === 0)
+            {
+                if (continuousFetchAndBackEnabled) {
+                    resultString += `<tr><td colspan="10"><span style="cursor: pointer;text-decoration:none; color:aqua;" id="${storeObject["parentGroupId"]}" title="continuousFetch">No Data!, Go back</span></td></tr>`
+                }
+            }
+            resultString += `</tbody></table>`;
 
-    document.getElementById("processGroupsResult").innerHTML = resultString;
+            document.getElementById("processGroupsResult").innerHTML = resultString;
+        }
+    });
 }
 
 // Code taken from here : https://www.w3schools.com/howto/howto_js_filter_table.asp
@@ -977,29 +1016,29 @@ document.getElementById(`copySearchResults`).addEventListener(`click`, () => {
 //                                             tempRecord[`parentPgId`] = record[`parentGroupId`];
 //                                             tempRecord[`properties`] = record[`properties`];
 //                                             tempRecord[`name`] = record[`name`];
-    
+
 //                                             var tempComponent = record[`component`];
 //                                             tempRecord[`properties`] = tempComponent[`properties`];
 //                                             tempRecord[`bundle`] = tempComponent[`bundle`];
 //                                             tempRecord[`validationStatus`] = tempComponent[`validationStatus`];
 //                                             tempRecord[`state`] = tempComponent[`state`];
-    
+
 //                                             controllerServicesDataStore[`data`].push(tempRecord); 
 //                                     });
-    
+
 //                                     console.log(controllerServicesDataStore);
 //                                 }
 //                             }).catch((error) => {
 //                                 console.log(error);
 //                             });
-    
+
 //                     }
 //                 }
 //             }).catch((error) => {
 //                 console.log(error);
 //                 alert(`Reload nifi page and then try again!...`);
 //             });
-    
+
 //         }
 //     }).catch((error) => {
 //         console.log(error);
@@ -1063,6 +1102,22 @@ document.addEventListener(`click`, (event) => {
         setCachedItem(`loggedIn`, `false`);
         window.location.reload();
         chrome.identity.clearAllCachedAuthTokens();
+    }
+});
+
+/************************************************************************************************************/
+
+document.body.addEventListener("click", (event) => {
+     /*
+       When the cached process groups data and current hostname matches, you can browse that
+       particular nifi instance without ever needing to leave the extension.
+    */
+    if (event.target.title == "continuousFetch") {
+        console.log(event.target.id);
+        let continuousFetchEvent = new Event("click");
+        continuousFetchEvent.continuousFetch = true;
+        continuousFetchEvent.idToFetch = event.target.id;
+        document.getElementById("getProcessGroups").dispatchEvent(continuousFetchEvent);
     }
 });
 
