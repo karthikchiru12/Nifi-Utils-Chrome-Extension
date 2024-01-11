@@ -1,4 +1,4 @@
-var arecustomUIComponentsAddedToUI = false;
+var areCustomUIComponentsAddedToUI = false;
 
 async function fetchWrapper(url, request, responseType, context) {
     /*
@@ -197,6 +197,27 @@ try {
                 </div>
                 <div class="clear"></div>`;
             }
+            if (optionsDataStore[`copy_flow_component`] == `enabled`) {
+                chrome.storage.local.get(["dataFlowStore"], (item) => {
+                    var dataFlowStore = item["dataFlowStore"];
+                    if (dataFlowStore == null && dataFlowStore == undefined) {
+                        // When dataFlowStore is empty
+                        html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
+                        &nbsp;&nbsp;<i class="fa fa-upload" style="color:black;"></i>
+                        <button id="copy_flow_to_cache" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Backups the selected flows template to extension cache">Copy&nbsp;Flow</button>
+                        </div>
+                        <div class="clear"></div>`;
+                    }
+                    else {
+                        // When there is data in dataFlowStore
+                        html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
+                        &nbsp;&nbsp;<i class="fa fa-upload" style="color:black;"></i>
+                        <button id="paste_flow_from_cache" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Paste the flow to current instance">Paste&nbsp;Flow</button>
+                        </div>
+                        <div class="clear"></div>`;
+                    }
+                });
+            }
             if (optionsDataStore[`service_info_component`] == `enabled`) {
                 addServiceInfoDetails();
             }
@@ -207,19 +228,32 @@ try {
     document.body.addEventListener(`auxclick`, (event) => {
 
         var element = document.querySelector(`#variable-registry-menu-item`);
-        if (element != undefined && element != null && arecustomUIComponentsAddedToUI == false) {
-            arecustomUIComponentsAddedToUI = true;
+        if (element != undefined && element != null && areCustomUIComponentsAddedToUI == false) {
+            chrome.storage.local.get(["dataFlowStore"], (item) => {
+                var dataFlowStore = item["dataFlowStore"];
+                if (dataFlowStore != null && dataFlowStore != undefined) {
+                    html_to_inject = html_to_inject.replace("copy_flow_to_cache", "paste_flow_from_cache");
+                    html_to_inject = html_to_inject.replace("Copy&nbsp;Flow", "Paste&nbsp;Flow");
+                    html_to_inject = html_to_inject.replace("Backups the selected flow's template to extension cache", "Paste the flow to current instance");
+                }
+                else {
+                    html_to_inject = html_to_inject.replace("paste_flow_from_cache", "copy_flow_to_cache");
+                    html_to_inject = html_to_inject.replace("Paste&nbsp;Flow", "Copy&nbsp;Flow");
+                    html_to_inject = html_to_inject.replace("BPaste the flow to current instance", "Backups the selected flow's template to extension cache");
+                }
+            });
+            areCustomUIComponentsAddedToUI = true;
             document.querySelector(`#variable-registry-menu-item`).insertAdjacentHTML(`beforebegin`, html_to_inject);
         }
     });
 
     // Renable the custom UI components after a left or right click
-    document.body.addEventListener('click',(event)=> {
-        arecustomUIComponentsAddedToUI = false;
+    document.body.addEventListener('click', (event) => {
+        areCustomUIComponentsAddedToUI = false;
     });
 
-    document.body.addEventListener('contextmenu',(event)=> {
-        arecustomUIComponentsAddedToUI = false;
+    document.body.addEventListener('contextmenu', (event) => {
+        areCustomUIComponentsAddedToUI = false;
     });
 
     document.addEventListener(`click`, (event) => {
@@ -540,3 +574,267 @@ catch (error) {
 }
 
 /************************************************************************************************************/
+
+document.addEventListener(`click`, (event) => {
+    if (event.target.id == `copy_flow_to_cache`) {
+        var token = JSON.parse(localStorage.getItem("jwt"))["item"];
+        var url = window.location.href;
+        var hostname = new URL(url).hostname.toString();
+        var params = new URL(url).searchParams;
+        var pgId = params.get("processGroupId");
+        var componentId = params.get("componentIds");
+        var id;
+        console.log(params.get("processGroupId"));
+        console.log(params.get("componentIds"));
+        if ((pgId == "root" || pgId == undefined || pgId == null || pgId == "") && (componentId == "" || componentId == undefined || componentId == null)) {
+            alert("Please select a process group to store in cache");
+        }
+        else {
+            if (componentId != "" && componentId != undefined && componentId != null) {
+                id = componentId;
+            }
+            else {
+                id = pgId;
+            }
+            var getProcessGroupDetailsRequest =
+            {
+                "method": "GET",
+                "headers":
+                {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+            // Well what can I say, Im a Lousy dev,so copy pasting from above. Still didn`t learn promises.
+            fetchWrapper(`https://${hostname}/nifi-api/process-groups/${id}`, getProcessGroupDetailsRequest,
+                "json", "processGroupDetails")
+                .then((processGroupData) => {
+                    // Getting selected process group details
+                    document.getElementById(`copy_flow_to_cache`).innerText = `Getting_details...`;
+                    var uploadParentPgId = processGroupData[`component`][`parentGroupId`].toString();
+                    var uploadPgId = processGroupData[`component`][`id`].toString();
+                    var uploadPgVersion = processGroupData[`revision`][`version`].toString();
+                    var uploadPgName = processGroupData[`component`][`name`];
+
+                    var createSnippetRequestBody = {
+                        "snippet": {
+                            "parentGroupId": uploadParentPgId,
+                            "processGroups": {}
+                        }
+                    };
+                    createSnippetRequestBody[`snippet`][`processGroups`][uploadPgId] = {
+                        "clientId": crypto.randomUUID(),
+                        "version": uploadPgVersion
+                    };
+                    var createSnippetRequest = {
+                        "method": "POST",
+                        "headers":
+                        {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        "body": JSON.stringify(createSnippetRequestBody)
+
+                    };
+
+                    // Creating a snippet
+                    fetchWrapper(`https://${hostname}/nifi-api/snippets`, createSnippetRequest,
+                        "json", "createSnippet").then((snippetData) => {
+                            document.getElementById(`copy_flow_to_cache`).innerText = `Creating_snippet...`;
+                            var snippetId = snippetData[`snippet`][`id`].toString();
+                            var templateName = `${hostname} && ${uploadPgId} && ${uploadPgName} && ${new Date().getTime()} && ${uploadPgVersion}`;
+                            var createTemplateRequest =
+                            {
+                                "method": "POST",
+                                "headers":
+                                {
+                                    "Authorization": `Bearer ${token}`,
+                                    "Content-Type": "application/json"
+                                },
+                                "body": JSON.stringify({
+                                    "name": templateName,
+                                    "snippetId": snippetId,
+                                })
+                            };
+                            // Creating a template
+                            fetchWrapper(`https://${hostname}/nifi-api/process-groups/root/templates`, createTemplateRequest,
+                                "json", "createTemplate")
+                                .then((templateData) => {
+                                    document.getElementById(`copy_flow_to_cache`).innerText = `Creating_template...`;
+
+                                    var templateId = templateData[`template`][`id`].toString();
+                                    var templateDownloadRequest =
+                                    {
+                                        "method": "GET",
+                                        "headers":
+                                        {
+                                            "Authorization": `Bearer ${token}`,
+                                            "Content-Type": "application/json"
+                                        }
+                                    };
+                                    // Downloading the template
+                                    fetchWrapper(`https://${hostname}/nifi-api/templates/${templateId}/download`, templateDownloadRequest,
+                                        "text", "downloadTemplate")
+                                        .then((templateXml) => {
+                                            document.getElementById(`copy_flow_to_cache`).innerText = `Getting_template...`;
+                                            var dataFlowStoreObj = {};
+                                            dataFlowStoreObj["templateName"] = templateName;
+                                            dataFlowStoreObj["templateData"] = templateXml;
+                                            chrome.storage.local.set({ "dataFlowStore": dataFlowStoreObj }, () => {
+                                                console.log("Saved!");
+                                                document.getElementById(`copy_flow_to_cache`).innerText = `Saved_template...`;
+                                                alert("Saved the template to cache successfully!...");
+                                            });
+
+                                            var deleteTemplateRequest =
+                                            {
+                                                "method": "DELETE",
+                                                "headers":
+                                                {
+                                                    "Authorization": `Bearer ${token}`,
+                                                    "Content-Type": "application/json"
+                                                }
+                                            };
+
+                                            fetchWrapper(`https://${hostname}/nifi-api/templates/${templateId}`, deleteTemplateRequest,
+                                                "json", "deleteTemplate")
+                                                .then((data) => {
+                                                    console.log(data);
+                                                })
+                                                .catch((error) => {
+                                                    console.log(error);
+                                                });
+
+                                        });
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }
+});
+
+/************************************************************************************************************/
+
+
+document.addEventListener(`click`, (event) => {
+    if (event.target.id == `paste_flow_from_cache`) {
+        var token = JSON.parse(localStorage.getItem("jwt"))["item"];
+        var url = window.location.href;
+        var hostname = new URL(url).hostname.toString();
+        var params = new URL(url).searchParams;
+        var pgId = params.get("processGroupId");
+        var componentId = params.get("componentIds");
+        var id;
+        console.log(params.get("processGroupId"));
+        console.log(params.get("componentIds"));
+        if ((pgId == "root" || pgId == undefined || pgId == null || pgId == "") && (componentId == "" || componentId == undefined || componentId == null)) {
+            alert("Please select a process group import the template");
+        }
+        else {
+            if (componentId != "" && componentId != undefined && componentId != null) {
+                id = componentId;
+            }
+            else {
+                id = pgId;
+            }
+            // What happens twice, also happens thrice
+
+            chrome.storage.local.get(["dataFlowStore"], (item) => {
+                var dataFlowStore = item["dataFlowStore"];
+                if (dataFlowStore != null && dataFlowStore != undefined) {
+                    document.getElementById(`paste_flow_from_cache`).innerText = `Uploading_template...`;
+                    let formData = new FormData();
+                    formData.append("template", new Blob([dataFlowStore["templateData"]], { type: 'text/xml' }), dataFlowStore["templateName"]);
+
+                    var uploadTemplateRequest =
+                    {
+                        "method": "POST",
+                        "headers":
+                        {
+                            "Authorization": `Bearer ${token}`,
+                            'Content-Disposition': 'attachment'
+                        },
+                        "body": formData
+                    };
+
+                    // Uploading template
+                    fetchWrapper(`https://${hostname}/nifi-api/process-groups/root/templates/upload`, uploadTemplateRequest,
+                        "formData", "uploadTemplate").then((templateData) => {
+                            document.getElementById(`paste_flow_from_cache`).innerText = `Importing_template...`;
+                            console.log(templateData);
+                            const templateIdRegexp = /<id>(.*?)<\/id>/;
+                            const templateId = templateIdRegexp.exec(templateData)[1];
+                            const encodingVersionRegexp = /<template encoding-version="(.*?)">/;
+                            const encodingVersion = encodingVersionRegexp.exec(templateData)[1];
+                            console.log(templateId, encodingVersion);
+
+                            var instantiateTemplateRequest =
+                            {
+                                "method": "POST",
+                                "headers":
+                                {
+                                    "Authorization": `Bearer ${token}`,
+                                    "Content-Type": "application/json"
+                                },
+                                "body": JSON.stringify({
+                                    templateId: templateId,
+                                    encodingVersion: parseFloat(encodingVersion),
+                                    "originX": -1000,
+                                    "originY": 500
+                                })
+                            };
+
+                            // Instantiating a template
+                            fetchWrapper(`https://${hostname}/nifi-api/process-groups/${id}/template-instance`, instantiateTemplateRequest,
+                                "json", "InstantiatingTemplate")
+                                .then((templateData) => {
+                                    document.getElementById(`paste_flow_from_cache`).innerText = `Template_Added...`;
+                                    alert("Template added successfully");
+                                    chrome.storage.local.remove(["dataFlowStore"], () => {
+                                        var error = chrome.runtime.lastError;
+                                        if (error) {
+                                            console.error(error);
+                                        }
+                                    });
+
+                                    var deleteTemplateRequest =
+                                    {
+                                        "method": "DELETE",
+                                        "headers":
+                                        {
+                                            "Authorization": `Bearer ${token}`,
+                                            "Content-Type": "application/json"
+                                        }
+                                    };
+
+                                    fetchWrapper(`https://${hostname}/nifi-api/templates/${templateId}`, deleteTemplateRequest,
+                                        "json", "deleteTemplate")
+                                        .then((data) => {
+                                            console.log(data);
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+
+                                })
+                                .catch((error) => {
+                                    console.log(error);
+                                });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                        });
+                }
+            });
+        }
+    }
+});
