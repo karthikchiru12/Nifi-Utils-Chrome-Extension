@@ -54,6 +54,16 @@
             <input type="radio" id="disable" name="upload_to_drive_component" value="disable">
         </div><br>
         <div>
+            <label><span style="color:#189AB4;">&diams; </span> Live JVM metrics <span style="color: crimson;" title="Still under development, disable if you notice any issues."><b>[EXPERIMENTAL]</b></span> :
+            </label>&nbsp;&nbsp;
+            <label style="color:lightseagreen;">Enable</label>
+            <input type="radio" id="enable" name="live_jvm_metrics_component"
+                value="enable">&nbsp;&nbsp;|&nbsp;&nbsp;
+            <label style="color:coral;">Disable</label>
+            <input type="radio" id="disable" name="live_jvm_metrics_component" value="disable">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Refresh Interval : &nbsp;&nbsp;
+            <input type="range" id="live_jvm_metrics_refresh_interval" min="5" max="300" step="5" value="5">&nbsp;&nbsp;<span id="refresh_interval_value">5 seconds</span>
+        </div><br>
+        <div>
             <label><span style="color:#189AB4;">&diams; </span> Copy & Paste flows across environments <span style="color: crimson;" title="Still under development, disable if you notice any issues."><b>[EXPERIMENTAL]</b></span> :
             </label>&nbsp;&nbsp;
             <label style="color:lightseagreen;">Enable</label>

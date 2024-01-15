@@ -197,6 +197,26 @@ try {
                 </div>
                 <div class="clear"></div>`;
             }
+            if (optionsDataStore[`live_jvm_metrics_component`] == `enabled`) {
+                document.querySelector("#graph-controls").insertAdjacentHTML("beforeend", `<div id="live-jvm-metrics" style="user-select: none;color:black;">
+                <div style="margin:5px;" class="fa fa-bar-chart">
+                </div>
+                <h1 style="margin:5px; font-size:20px;font-weight:500;">JVM Metrics</h1>
+                <p style="margin:5px;">Added using <span style="font-size:15px;color:teal;font-weight:900;">Nifi Utils</span></p>
+                <br>
+                <div style="margin:5px;font-size:12px;">
+                    <p id="live-last-updated">Last Updated : </p>
+                    <p id="live-uptime">Uptime : </p>
+                    <p id="live-heap-percentage">Heap % : </p>
+                    <p id="live-free-heap">Free heap : </p>
+                    <p id="live-used-heap">Used heap : </p>
+                    <p id="live-max-heap">Max heap : </p>
+                    <p id="live-cores">Cores : </p>
+                    <p id="live-load-average">Average Load : </p>
+                </div>
+                </div>`);
+                addLiveJvmMetrics();
+            }
             if (optionsDataStore[`copy_flow_component`] == `enabled`) {
                 chrome.storage.local.get(["dataFlowStore"], (item) => {
                     var dataFlowStore = item["dataFlowStore"];
@@ -241,9 +261,9 @@ try {
                     html_to_inject = html_to_inject.replace("Paste&nbsp;Flow", "Copy&nbsp;Flow");
                     html_to_inject = html_to_inject.replace("BPaste the flow to current instance", "Backups the selected flow's template to extension cache");
                 }
+                areCustomUIComponentsAddedToUI = true;
+                document.querySelector(`#variable-registry-menu-item`).insertAdjacentHTML(`beforebegin`, html_to_inject);
             });
-            areCustomUIComponentsAddedToUI = true;
-            document.querySelector(`#variable-registry-menu-item`).insertAdjacentHTML(`beforebegin`, html_to_inject);
         }
     });
 
@@ -479,20 +499,24 @@ try {
                                                                     console.log(data);
                                                                 })
                                                                 .catch((error) => {
+                                                                    alert(`Deleting the temporarily created template failed. Please check if you have necessary permissions to do this operation.`);
                                                                     console.log(error);
                                                                 });
 
                                                         });
                                                 })
                                                 .catch((error) => {
+                                                    alert(`Creating template. Please check if you have necessary permissions to do this operation`);
                                                     console.log(error);
                                                 });
                                         })
                                         .catch((error) => {
+                                            alert(`Creating snippet failed. Please check if you have necessary permissions to do this operation`);
                                             console.log(error);
                                         });
                                 })
                                 .catch((error) => {
+                                    alert(`Getting process groups failed. Please check if you have necessary permissions to do this operation`);
                                     console.log(error);
                                 });
                         }
@@ -702,20 +726,24 @@ document.addEventListener(`click`, (event) => {
                                                     console.log(data);
                                                 })
                                                 .catch((error) => {
+                                                    alert(`Removing the temporarily created template failed. Please check if you have necessary permissions to do this operation`);
                                                     console.log(error);
                                                 });
 
                                         });
                                 })
                                 .catch((error) => {
+                                    alert(`Creating template failed. Please check if you have necessary permissions to do this operation`);
                                     console.log(error);
                                 });
                         })
                         .catch((error) => {
+                            alert(`Creating a snippet failed. Please check if you have necessary permissions to do this operation`);
                             console.log(error);
                         });
                 })
                 .catch((error) => {
+                    alert(`Getting process groups failed. Please check if you have necessary permissions to do this operation`);
                     console.log(error);
                 });
         }
@@ -793,18 +821,19 @@ document.addEventListener(`click`, (event) => {
                                 })
                             };
 
+                            chrome.storage.local.remove(["dataFlowStore"], () => {
+                                var error = chrome.runtime.lastError;
+                                if (error) {
+                                    console.error(error);
+                                }
+                            });
+
                             // Instantiating a template
                             fetchWrapper(`https://${hostname}/nifi-api/process-groups/${id}/template-instance`, instantiateTemplateRequest,
                                 "json", "InstantiatingTemplate")
                                 .then((templateData) => {
                                     document.getElementById(`paste_flow_from_cache`).innerText = `Template_Added...`;
                                     alert("Template added successfully");
-                                    chrome.storage.local.remove(["dataFlowStore"], () => {
-                                        var error = chrome.runtime.lastError;
-                                        if (error) {
-                                            console.error(error);
-                                        }
-                                    });
 
                                     var deleteTemplateRequest =
                                     {
@@ -822,15 +851,18 @@ document.addEventListener(`click`, (event) => {
                                             console.log(data);
                                         })
                                         .catch((error) => {
+                                            alert(`Deleting the temporarily created template failed. Please check if you have necessary permissions to do this operation`);
                                             console.log(error);
                                         });
 
                                 })
                                 .catch((error) => {
+                                    alert(`Instantiating the template failed. Please check if you have necessary permissions to do this operation`);
                                     console.log(error);
                                 });
                         })
                         .catch((error) => {
+                            alert(`Uploading the template failed. Please check if you have necessary permissions to do this operation`);
                             console.log(error);
                         });
                 }
@@ -838,3 +870,56 @@ document.addEventListener(`click`, (event) => {
         }
     }
 });
+
+/************************************************************************************************************/
+
+function addLiveJvmMetrics() {
+    try {
+        var refresh_interval_value = "5";
+        chrome.storage.local.get(["optionsDataStore"], (item) => {
+            var optionsDataStore = item["optionsDataStore"];
+            if (optionsDataStore != null && optionsDataStore != undefined) {
+                refresh_interval_value = optionsDataStore["live_jvm_metrics_refresh_interval"];
+                setInterval(() => {
+                    console.log(new Date());
+                    var token = JSON.parse(localStorage.getItem("jwt"))["item"];
+                    var url = window.location.href;
+                    var hostname = new URL(url).hostname.toString();
+                    var systemDiagnosticsRequest = {
+                        "method": "GET",
+                        "headers":
+                        {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    }
+                    fetchWrapper(`https://${hostname}/nifi-api/system-diagnostics`, systemDiagnosticsRequest,
+                        "json", "systemDiagnostics").then((data) => {
+                            var heapUtilization = data["systemDiagnostics"]["aggregateSnapshot"]["heapUtilization"];
+                            var uptime = data["systemDiagnostics"]["aggregateSnapshot"]["uptime"];
+                            var maxHeap = data["systemDiagnostics"]["aggregateSnapshot"]["maxHeap"];
+                            var usedHeap = data["systemDiagnostics"]["aggregateSnapshot"]["usedHeap"];
+                            var freeHeap = data["systemDiagnostics"]["aggregateSnapshot"]["freeHeap"];
+                            var availableProcessors = data["systemDiagnostics"]["aggregateSnapshot"]["availableProcessors"];
+                            var processorLoadAverage = data["systemDiagnostics"]["aggregateSnapshot"]["processorLoadAverage"];
+                            var statsLastRefreshed = data["systemDiagnostics"]["aggregateSnapshot"]["statsLastRefreshed"];
+                            document.getElementById("live-heap-percentage").innerHTML = `Heap % : ${heapUtilization}`;
+                            document.getElementById("live-last-updated").innerHTML = `Last Updated : ${statsLastRefreshed}`;
+                            document.getElementById("live-uptime").innerHTML = `Uptime : ${uptime}`;
+                            document.getElementById("live-free-heap").innerHTML = `Free heap : ${freeHeap}`;
+                            document.getElementById("live-max-heap").innerHTML = `Max heap : ${maxHeap}`;
+                            document.getElementById("live-used-heap").innerHTML = `Used heap : ${usedHeap}`;
+                            document.getElementById("live-load-average").innerHTML = `Average Load : ${processorLoadAverage}`;
+                            document.getElementById("live-cores").innerHTML = `Cores: ${availableProcessors}`;
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                }, parseInt(refresh_interval_value) * 1000);
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+/************************************************************************************************************/

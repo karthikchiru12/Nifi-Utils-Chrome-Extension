@@ -22,6 +22,8 @@ try {
             optionsObj["upload_to_drive_component"] = "disabled";
             optionsObj["service_info_component"] = "disabled";
             optionsObj["copy_flow_component"] = "disabled";
+            optionsObj["live_jvm_metrics_component"] = "disabled";
+            optionsObj["live_jvm_metrics_refresh_interval"] = 5;
             chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
                 console.log("Saved!");
             });
