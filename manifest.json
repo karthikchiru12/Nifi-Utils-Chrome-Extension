@@ -1,7 +1,7 @@
 {
     "name": "Nifi Utils",
     "description": "Manage your production nifi instances like a pro.",
-    "version": "1.0.15",
+    "version": "1.0.16",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArsgHackMeidxHeIGv09aBUZ97rhHTJrFhKE2qr/iljePLCTqKdwUz1sSqWIfMzNfWQ6jW8Bk4NzXiA6UuGWWh9FuTXXDhWYd3ecRiit5E+mVrxjSV5qq+YtwuU8vsnnAEib6Z5we/dQNFyw00ztTV0w47M6E2sx6OOWFK5ope6d1TXV1k63q0CDkOYdORx1Zi+BoOBH4Hnv+FLziq2bMHtvXNnRLMJPDYxXWo47ZYVBA/LJLiioJyzbxUvtNOlA1dMzSM835PWqE+1gREh8Lz/3DdLlrBWIa+MXRC0FHpE0tb+tGs7lUlF+IzYcW+Vnc0gHLLrnIU/Y1rnRx3v9+4QIDAQAB",
     "permissions": [
         "storage",

@@ -71,8 +71,24 @@ document.getElementById("saveCurrentOptions").addEventListener("click", (event) 
 
 /************************************************************************************************************/
 
-
 document.getElementById("live_jvm_metrics_refresh_interval").addEventListener("input", (event) => {
     var refreshInterval = document.getElementById("live_jvm_metrics_refresh_interval").value;
     document.getElementById("refresh_interval_value").innerHTML = `${refreshInterval} seconds`;
 });
+
+/************************************************************************************************************/
+
+document.addEventListener("click", (event) => {
+    if (event.target.id == `flush_copy_paste_cache`) {
+        chrome.storage.local.remove(["dataFlowStore"], () => {
+            var error = chrome.runtime.lastError;
+            if (error) {
+                console.error(error);
+            }
+        });
+        alert("Flushed the cache!...");
+    }
+
+});
+
+/************************************************************************************************************/

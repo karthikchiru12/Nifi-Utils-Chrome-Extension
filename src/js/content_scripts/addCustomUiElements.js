@@ -857,11 +857,23 @@ document.addEventListener(`click`, (event) => {
 
                                 })
                                 .catch((error) => {
+                                    chrome.storage.local.remove(["dataFlowStore"], () => {
+                                        var error = chrome.runtime.lastError;
+                                        if (error) {
+                                            console.error(error);
+                                        }
+                                    });
                                     alert(`Instantiating the template failed. Please check if you have necessary permissions to do this operation`);
                                     console.log(error);
                                 });
                         })
                         .catch((error) => {
+                            chrome.storage.local.remove(["dataFlowStore"], () => {
+                                var error = chrome.runtime.lastError;
+                                if (error) {
+                                    console.error(error);
+                                }
+                            });
                             alert(`Uploading the template failed. Please check if you have necessary permissions to do this operation`);
                             console.log(error);
                         });
