@@ -31,6 +31,7 @@ chrome.storage.local.get(["optionsDataStore"], (item) => {
         optionsObj["service_info_component"] = "disabled";
         optionsObj["copy_flow_component"] = "disabled";
         optionsObj["live_jvm_metrics_component"] = "disabled";
+        optionsObj["discover_scripts_component"] = "disabled";
         optionsObj["live_jvm_metrics_refresh_interval"] = 5;
         chrome.storage.local.set({ "optionsDataStore": optionsObj }, () => {
             console.log("Saved!");

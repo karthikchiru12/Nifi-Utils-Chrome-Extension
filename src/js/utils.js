@@ -227,12 +227,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
-    // If upload to drive component is not enabled, then disable the sign in button
     getCachedItem(`optionsDataStore`)
         .then((data) => {
+            // If upload to drive component is not enabled, then disable the sign in button
             if (data[`upload_to_drive_component`] != `enabled`) {
                 document.getElementById(`signIn`).style.display = `none`;
             }
+            if (data[`discover_scripts_component`] == `enabled`) {
+                // If scripts discovery report is not empty
+                getCachedItem(`scriptsDataStore`)
+                    .then((data) => {
+                        if (data) {
+                            document.getElementById(`openScriptsReport`).style.display = `block`;
+                        }
+                    });
+            }
+
         });
 
 
@@ -360,7 +370,7 @@ document.getElementById(`getProcessGroups`).addEventListener(`click`, (event) =>
     /*
        Fetch process groups
     */
-   
+
     getActiveTab().then((tabParams) => {
         var tabId = tabParams[`tabId`];
         var url = tabParams[`url`];
@@ -592,8 +602,7 @@ function setProcessGroupTable(storeObject) {
                 resultString += `<td>${element["queuedData"]}</td></tr>`;
                 rowIndex += 1;
             });
-            if(storeObject[`data`].length === 0)
-            {
+            if (storeObject[`data`].length === 0) {
                 if (continuousFetchAndBackEnabled) {
                     resultString += `<tr><td colspan="10"><span style="cursor: pointer;text-decoration:none; color:aqua;" id="${storeObject["parentGroupId"]}" title="continuousFetch">No Data!, Go back</span></td></tr>`
                 }
@@ -1108,10 +1117,10 @@ document.addEventListener(`click`, (event) => {
 /************************************************************************************************************/
 
 document.body.addEventListener("click", (event) => {
-     /*
-       When the cached process groups data and current hostname matches, you can browse that
-       particular nifi instance without ever needing to leave the extension.
-    */
+    /*
+      When the cached process groups data and current hostname matches, you can browse that
+      particular nifi instance without ever needing to leave the extension.
+   */
     if (event.target.title == "continuousFetch") {
         console.log(event.target.id);
         let continuousFetchEvent = new Event("click");
@@ -1122,3 +1131,15 @@ document.body.addEventListener("click", (event) => {
 });
 
 /************************************************************************************************************/
+
+
+document.body.addEventListener("click", (event) => {
+    if (event.target.id == "openScriptsReport") {
+        console.log(event.target.id);
+        chrome.runtime.sendMessage({ "actionName": "openScriptsViewer" }).then((response) => {
+            console.log(response)
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+});

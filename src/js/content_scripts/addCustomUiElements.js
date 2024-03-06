@@ -197,6 +197,13 @@ try {
                 </div>
                 <div class="clear"></div>`;
             }
+            if (optionsDataStore[`discover_scripts_component`] == `enabled`) {
+                html_to_inject += `<div id="custom-context-menu-item" style="background-color:#AABBC3; border-bottom:solid 1px black;">
+                &nbsp;&nbsp;<i class="fa fa-gear" style="color:black;"></i>
+                <button id="custom_view_scripts" style="border :0; color:black; background-color:#AABBC3; font-weight:900;" title="Opens the scripts in the current flow level & descendent levels in separate tab.">Discover&nbsp;Scripts</button>
+                </div>
+                <div class="clear"></div>`;
+            }
             if (optionsDataStore[`live_jvm_metrics_component`] == `enabled`) {
                 document.querySelector("#graph-controls").insertAdjacentHTML("beforeend", `<div id="live-jvm-metrics" style="user-select: none;color:black;">
                 <div style="margin:5px;" class="fa fa-bar-chart">
@@ -934,4 +941,80 @@ function addLiveJvmMetrics() {
         console.log(error);
     }
 }
+/************************************************************************************************************/
+
+document.addEventListener("click", (event) => {
+    if (event.target.id == `custom_view_scripts`) {
+        var token = JSON.parse(localStorage.getItem("jwt"))["item"];
+        var url = window.location.href;
+        var hostname = new URL(url).hostname.toString();
+        var params = new URL(url).searchParams;
+        var pgId = params.get("processGroupId");
+        var componentId = params.get("componentIds");
+        var id;
+        console.log(params.get("processGroupId"));
+        console.log(params.get("componentIds"));
+        if ((pgId == "root" || pgId == undefined || pgId == null || pgId == "") && (componentId == "" || componentId == undefined || componentId == null)) {
+            alert("Please select a process group to copy the scripts");
+        }
+        else {
+            if (componentId != "" && componentId != undefined && componentId != null) {
+                id = componentId;
+            }
+            else {
+                id = pgId;
+            }
+            document.getElementById(`custom_view_scripts`).innerText = `Discovering!...`;
+            // What happens thrice, also happens n times
+            var getProcessorsRequest = {
+                "method": "GET",
+                "headers":
+                {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            };
+
+            fetchWrapper(`https://${hostname}/nifi-api/process-groups/${id}/processors?includeDescendantGroups=true`, getProcessorsRequest,
+                `json`, `getProcessors`)
+                .then((processorsData) => {
+
+                    let scriptsObject = {};
+                    scriptsObject.data = [];
+                    scriptsObject.hostname = hostname;
+                    scriptsObject.parentPgId = id;
+
+                    processorsData["processors"].forEach((record) => {
+                        const componentType = record["component"]["type"].toString().toLowerCase();
+                        if (componentType.includes("execute") || componentType.includes("script")) {
+                            scriptsObject.data.push(record);
+                        }
+
+                    });
+                    if (scriptsObject.data.length > 0) {
+                        chrome.storage.local.set({ "scriptsDataStore": scriptsObject }, () => {
+                            console.log("Saved!");
+                            document.getElementById(`custom_view_scripts`).innerText = `Done!...`;
+                        });
+
+                        chrome.runtime.sendMessage({ "actionName": "openScriptsViewer" }).then((response) => {
+                            console.log(response)
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+
+                    }
+                    else {
+                        alert("There are no scripts in this scope!...");
+                    }
+
+                })
+                .catch((error) => {
+                    console.log(error);
+                    alert("Failed while discovering scripts, please try again, or reduce the scope!...");
+                });
+        }
+    }
+});
+
 /************************************************************************************************************/

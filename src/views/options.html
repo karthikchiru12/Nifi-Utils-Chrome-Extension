@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="script-src-elem 'self';">
     <link rel="stylesheet" href="../../bootstrap/bootstrap.min.css">
     <link href="../css/options.css" rel="stylesheet">
     <title>Options - Nifi Utils</title>
@@ -81,6 +82,15 @@
                 value="enable">&nbsp;&nbsp;|&nbsp;&nbsp;
             <label style="color:coral;">Disable</label>
             <input type="radio" id="disable" name="service_info_component" value="disable">
+        </div><br>
+        <div>
+            <label><span style="color:#189AB4;">&diams; </span> Discover Scripts <span style="color: crimson;" title="Still under development, disable if you notice any issues."><b>[EXPERIMENTAL]</b></span> :
+            </label>&nbsp;&nbsp;
+            <label style="color:lightseagreen;">Enable</label>
+            <input type="radio" id="enable" name="discover_scripts_component"
+                value="enable">&nbsp;&nbsp;|&nbsp;&nbsp;
+            <label style="color:coral;">Disable</label>
+            <input type="radio" id="disable" name="discover_scripts_component" value="disable">
         </div>
     </div><br><br>
     <button class="btn btn-sm btn-primary" id="saveCurrentOptions"><b>Save</b></button>

@@ -105,6 +105,10 @@ body {
     display: none;
 }
 
+#openScriptsReport {
+    display: none;
+}
+
 #SearchTable {
     font-size: small;
 }
