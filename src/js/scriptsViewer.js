@@ -1,7 +1,7 @@
 /************************************************************************************************************/
 const replacerFunction = (key, value) => {
     // This is crucial
-    if (key.includes("script-body")) return `<br><br><pre><code class=groovy>${value.replaceAll(/&/g, "&amp;").replaceAll(/"/g, "&quot;").replaceAll("\t", "    ").replaceAll(/\r*\n/g, "&#10;").replaceAll(/</g, "&lt;").replaceAll(/>/g, "&gt;").replaceAll(/'/g, "&#039;")}</code></pre><br><br>`;
+    if (key.includes("script-body") && value != null) return `<br><br><pre><code class=groovy>${value.replaceAll(/&/g, "&amp;").replaceAll(/"/g, "&quot;").replaceAll("\t", "    ").replaceAll(/\r*\n/g, "&#10;").replaceAll(/</g, "&lt;").replaceAll(/>/g, "&gt;").replaceAll(/'/g, "&#039;").replaceAll(/\\/g, "&bsol;")}</code></pre><br><br>`;
     return value
 }
 /************************************************************************************************************/
@@ -11,7 +11,8 @@ chrome.storage.local.get([`scriptsDataStore`], (item) => {
         let scriptsTableData = ``;
         let idx = 1;
         scriptsDataStore.data.forEach((record) => {
-            scriptsTableData += `<tr><td>${idx}</td><td>${record["component"]["name"] + "<br><br>" + record["component"]["type"]}<br><br><a target="_blank" href="https://${scriptsDataStore.hostname}/nifi/?processGroupId=${record["component"]["parentGroupId"]}&componentIds=${record["id"]}" style="color:tomato;text-decoration:none;">Open Processor Location</a></td><td>${JSON.stringify(record["component"]["config"]["properties"], replacerFunction, 2)}</td></tr>`;
+            scriptsTableData += `<tr><td>${idx}</td><td>${record["component"]["name"] + "<br><br>" + record["component"]["type"]}<br><br><a target="_blank" href="https://${scriptsDataStore.hostname}/nifi/?processGroupId=${record["component"]["parentGroupId"]}&componentIds=${record["id"]}" style="color:tomato;text-decoration:none;">Open Processor Location</a>
+            <br><br><img src="../../../assets/misc_icons/${["disabled", "running", "stopped", "invalid"].includes(record["component"]["state"].toLowerCase()) ? record["component"]["state"].toLowerCase() : "invalid"}.svg">&nbsp;&nbsp;${record["component"]["state"]}</td><td>${JSON.stringify(record["component"]["config"]["properties"], replacerFunction, 2)}</td></tr>`;
             idx++;
         });
         document.getElementById(`reportLevel`).innerHTML = `The report is generated at level : <a target="_blank" href="https://${scriptsDataStore.hostname}/nifi/?processGroupId=${scriptsDataStore["parentPgId"]}" style="color:tomato;text-decoration:none;">${scriptsDataStore["parentPgId"]}</a>`;
@@ -35,7 +36,7 @@ document.addEventListener("click", (event) => {
         document.getElementById(`scriptsTable`).innerHTML = ``;
         setTimeout(() => {
             window.close();
-        },2000);
+        }, 2000);
     }
 });
 /************************************************************************************************************/

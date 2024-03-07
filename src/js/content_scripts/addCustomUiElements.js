@@ -986,7 +986,7 @@ document.addEventListener("click", (event) => {
 
                     processorsData["processors"].forEach((record) => {
                         const componentType = record["component"]["type"].toString().toLowerCase();
-                        if (componentType.includes("execute") || componentType.includes("script")) {
+                        if (componentType.includes("execute") && componentType.includes("script")) {
                             scriptsObject.data.push(record);
                         }
 
